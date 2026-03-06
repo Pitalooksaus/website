@@ -814,7 +814,7 @@ nav {
         </div>
         <div class="contact-info-item">
           <span class="icon">🦷</span>
-          <span>grillz@pitalooksaus.nl</span>
+          <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5b2a7bcb9b9af95a5bca1b4b9bababea6b4a0a6fbbbb9">[email&#160;protected]</a></span>
         </div>
         <div class="contact-info-item">
           <span class="icon">🎮</span>
@@ -830,18 +830,21 @@ nav {
     <div class="contact-right">
       <h2>Stuur een bericht</h2>
 
-      <div id="contact-form">
+      <form id="contact-form" action="https://formsubmit.co/jokkevds@gmail.com" method="POST">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="javascript:void(0)">
+        <input type="hidden" name="_template" value="box">
         <div class="form-group">
           <label>jouw naam</label>
-          <input type="text" placeholder="bijv. Mikko uit Finland">
+          <input type="text" name="naam" placeholder="bijv. Mikko uit Finland" required>
         </div>
         <div class="form-group">
           <label>e-mailadres</label>
-          <input type="email" placeholder="jij@ergens.nl">
+          <input type="email" name="email" placeholder="jij@ergens.nl" required>
         </div>
         <div class="form-group">
           <label>onderwerp</label>
-          <select>
+          <select name="onderwerp">
             <option>De grillz zijn ongelooflijk</option>
             <option>Ik wil ook een fortnite skin</option>
             <option>Mijn tandarts noemde jou ook</option>
@@ -851,12 +854,12 @@ nav {
         </div>
         <div class="form-group">
           <label>bericht</label>
-          <textarea placeholder="schrijf hier je boodschap..."></textarea>
+          <textarea name="bericht" placeholder="schrijf hier je boodschap..." required></textarea>
         </div>
-        <button class="submit-btn" onclick="submitForm()">
+        <button type="submit" class="submit-btn">
           VERZENDEN <span>→</span>
         </button>
-      </div>
+      </form>
 
       <div class="form-success" id="form-success">
         👑 bericht ontvangen. pita is op de hoogte gesteld. hij knikt.
@@ -872,7 +875,7 @@ nav {
   <span>gemaakt met angst en bewondering</span>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // PAGE NAVIGATION
 function showPage(id, link) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -911,10 +914,26 @@ function closeLightBtn() {
 }
 
 // CONTACT FORM
-function submitForm() {
-  document.getElementById('contact-form').style.display = 'none';
-  document.getElementById('form-success').style.display = 'block';
-}
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('contact-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      fetch('https://formsubmit.co/ajax/jokkevds@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: data
+      }).then(res => res.json()).then(() => {
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      }).catch(() => {
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      });
+    });
+  }
+});
 
 // CLICK SPARKS
 const sparks = ['💰','👑','💀','✨','🔥','💎','🦷'];
@@ -929,12 +948,4 @@ document.addEventListener('click', e => {
     el.style.left = e.clientX+'px';
     el.style.top  = e.clientY+'px';
     el.style.setProperty('--dx', Math.cos(a*Math.PI/180)*d+'px');
-    el.style.setProperty('--dy', Math.sin(a*Math.PI/180)*d+'px');
-    el.style.animationDelay = (i*0.05)+'s';
-    document.body.appendChild(el);
-    el.addEventListener('animationend', ()=>el.remove());
-  }
-});
-</script>
-</body>
-</html>
+    el.style.
