@@ -2,968 +2,864 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LEON — The Metallica Chronicles</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>🦆 EENDNITE</title>
 <style>
-:root {
-  --red: #e63312;
-  --gold: #f5c842;
-  --dark: #0a0a0a;
-  --grey: #1e1e1e;
-  --light: #c8c8c8;
-  --purple: #7b2fff;
-  --green: #00e55a;
-}
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; background:#000; overflow:hidden; font-family:'Share Tech Mono', monospace; }
+body { background:#000; overflow:hidden; font-family:'Arial Black',Arial,sans-serif; }
+canvas { display:block; }
 
-.screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; }
-.screen.active { display:flex; }
+#hud { position:fixed; inset:0; pointer-events:none; z-index:10; }
 
-/* ═══ MENU ═══ */
-#menu { background:#000; overflow:hidden; }
-#menu-bg { position:absolute; inset:0; background: radial-gradient(ellipse 80% 70% at 50% 60%, #1a0000 0%, #000 70%); }
-#spotlight { position:absolute; width:320px; height:700px; top:-80px; left:50%; transform:translateX(-50%); background: conic-gradient(from 180deg at 50% 0%, transparent 70deg, rgba(255,220,100,0.18) 90deg, rgba(255,200,80,0.32) 95deg, rgba(255,220,100,0.18) 100deg, transparent 130deg); filter: blur(2px); animation: spotFlicker 4s ease-in-out infinite; pointer-events:none; z-index:1; }
-@keyframes spotFlicker { 0%,100%{opacity:1;transform:translateX(-50%) rotate(-1deg)} 30%{opacity:0.92;transform:translateX(-50%) rotate(0.5deg)} 60%{opacity:0.97;transform:translateX(-50%) rotate(-0.8deg)} 80%{opacity:0.88;transform:translateX(-50%) rotate(1deg)} }
-#spotlight-ring { position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:90px; height:30px; border-radius:50%; background: radial-gradient(ellipse, rgba(255,220,100,0.7) 0%, transparent 70%); box-shadow: 0 0 30px 10px rgba(255,200,60,0.3); z-index:2; animation: spotFlicker 4s ease-in-out infinite; }
-#floor-glow { position:absolute; bottom:180px; left:50%; transform:translateX(-50%); width:260px; height:40px; border-radius:50%; background: radial-gradient(ellipse, rgba(255,180,50,0.22) 0%, transparent 70%); z-index:1; }
-#menu-leon { position:absolute; bottom:175px; left:50%; transform:translateX(-50%); z-index:3; animation: leonBreathe 3s ease-in-out infinite; }
-@keyframes leonBreathe { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-6px)} }
-#menu-content { position:relative; z-index:5; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; padding-bottom:20px; }
-#menu-title { font-family:'Bebas Neue', sans-serif; font-size:clamp(52px,9vw,96px); color:#fff; letter-spacing:10px; text-shadow: 0 0 40px rgba(230,51,18,0.8), 0 0 80px rgba(230,51,18,0.4), 2px 2px 0 #600, 4px 4px 0 #400; line-height:0.9; animation: titlePulse 3s ease-in-out infinite; }
-@keyframes titlePulse { 0%,100%{text-shadow:0 0 40px rgba(230,51,18,0.8),0 0 80px rgba(230,51,18,0.4),2px 2px 0 #600,4px 4px 0 #400} 50%{text-shadow:0 0 60px rgba(230,51,18,1),0 0 120px rgba(230,51,18,0.6),2px 2px 0 #600,4px 4px 0 #400} }
-#menu-sub { font-family:'Press Start 2P', monospace; font-size:10px; color:var(--gold); letter-spacing:4px; margin-top:8px; opacity:0.85; }
-#menu-tagline { font-family:'Share Tech Mono', monospace; font-size:13px; color:#888; margin-top:14px; letter-spacing:2px; }
-#menu-bottom { position:absolute; bottom:0; left:0; right:0; padding:20px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); z-index:5; display:flex; flex-direction:column; align-items:center; gap:12px; }
-.menu-btn { font-family:'Press Start 2P', monospace; font-size:11px; padding:14px 40px; border:2px solid var(--red); background: transparent; color:#fff; cursor:pointer; letter-spacing:2px; transition: all 0.15s; position:relative; overflow:hidden; }
-.menu-btn::before { content:''; position:absolute; inset:0; background:var(--red); transform:translateX(-101%); transition:transform 0.2s; z-index:-1; }
-.menu-btn:hover::before { transform:translateX(0); }
-.menu-btn:hover { box-shadow:0 0 20px rgba(230,51,18,0.6); }
-.menu-btn.secondary { border-color:#444; color:#666; font-size:9px; padding:10px 28px; }
-.menu-btn.secondary:hover { border-color:#888; color:#aaa; }
-.menu-btn.secondary::before { background:#333; }
-#menu-stars { position:absolute; inset:0; z-index:0; overflow:hidden; }
-.mstar { position:absolute; background:#fff; border-radius:50%; animation:twinkle linear infinite; }
-@keyframes twinkle { 0%,100%{opacity:0.1} 50%{opacity:0.8} }
+#crosshair {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:20px; height:20px;
+}
+#crosshair::before,#crosshair::after {
+  content:''; position:absolute; background:rgba(255,255,255,0.9); border-radius:1px;
+}
+#crosshair::before { width:2px; height:20px; left:9px; top:0; }
+#crosshair::after  { width:20px; height:2px; top:9px; left:0; }
 
-/* ═══ TIMELINE ═══ */
-#timeline-screen { background:#000; flex-direction:column; }
-#tl-header { font-family:'Bebas Neue', sans-serif; font-size:36px; color:var(--gold); letter-spacing:6px; text-shadow:0 0 20px rgba(245,200,66,0.5); padding:20px 0 6px; }
-#tl-subtitle { font-size:10px; color:#555; letter-spacing:2px; margin-bottom:24px; }
-#quest-timeline { display:flex; flex-direction:column; align-items:flex-start; width:min(600px,90vw); gap:0; position:relative; padding-left:30px; }
-#quest-timeline::before { content:''; position:absolute; left:42px; top:20px; bottom:20px; width:2px; background: linear-gradient(180deg, var(--red), var(--purple), #222); }
-.quest-node { display:flex; align-items:center; gap:16px; padding:14px 0; cursor:pointer; position:relative; width:100%; transition:all 0.2s; }
-.qn-dot { width:26px; height:26px; border-radius:50%; border:2px solid #444; background:#111; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; position:relative; z-index:1; transition:all 0.2s; }
-.qn-dot.complete { background:var(--red); border-color:var(--red); box-shadow:0 0 12px rgba(230,51,18,0.6); }
-.qn-dot.active { background:var(--gold); border-color:var(--gold); box-shadow:0 0 16px rgba(245,200,66,0.8); animation:dotPulse 1s ease-in-out infinite; }
-.qn-dot.locked { background:#111; border-color:#222; opacity:0.4; }
-@keyframes dotPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-.qn-text { display:flex; flex-direction:column; gap:3px; }
-.qn-name { font-family:'Press Start 2P', monospace; font-size:9px; color:#aaa; }
-.qn-desc { font-size:11px; color:#555; letter-spacing:1px; }
-.qn-badge { font-size:9px; padding:2px 7px; border-radius:2px; }
-.qn-badge.done { background:rgba(230,51,18,0.2); color:var(--red); border:1px solid var(--red); }
-.qn-badge.now { background:rgba(245,200,66,0.15); color:var(--gold); border:1px solid var(--gold); }
-.qn-badge.soon { background:rgba(50,50,50,0.5); color:#444; border:1px solid #333; }
-#tl-start-btn { margin-top:20px; font-family:'Press Start 2P', monospace; font-size:10px; padding:14px 36px; background:var(--red); color:#fff; border:none; cursor:pointer; letter-spacing:2px; box-shadow:0 0 20px rgba(230,51,18,0.4); transition:all 0.2s; }
-#tl-start-btn:hover { background:#ff4422; box-shadow:0 0 30px rgba(230,51,18,0.7); }
-
-/* ═══ GAME ═══ */
-#game-screen { background:#000; padding:0; align-items:stretch; justify-content:stretch; }
-#game-wrap { position:relative; width:100%; height:100%; display:flex; flex-direction:column; }
-
-/* ─── BIG CLEAR HUD ─── */
-#hud {
-  position:absolute; top:0; left:0; right:0; z-index:20;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  padding:10px 16px 8px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 80%, transparent 100%);
-  gap:10px;
-  pointer-events:none;
+#health-ui { position:absolute; bottom:28px; left:28px; }
+#health-label { color:#fff; font-size:12px; letter-spacing:2px; margin-bottom:4px; text-shadow:1px 1px 3px #000; }
+#health-track {
+  width:240px; height:20px; background:rgba(0,0,0,0.55);
+  border:2px solid rgba(255,255,255,0.7); border-radius:3px; overflow:hidden; position:relative;
+}
+#health-fill { height:100%; width:100%; background:linear-gradient(90deg,#e83030,#ff8800); transition:width 0.15s; border-radius:1px; }
+#health-num {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:11px; font-weight:bold; text-shadow:1px 1px 2px #000;
 }
 
-/* ── Character panels ── */
-.char-panel {
-  display:flex; flex-direction:column; gap:5px;
-}
-.char-panel.right { align-items:flex-end; }
+#ammo-ui { position:absolute; bottom:28px; right:28px; text-align:right; }
+#ammo-label { color:#fff; font-size:12px; letter-spacing:2px; text-shadow:1px 1px 3px #000; }
+#ammo-val { font-size:44px; font-weight:900; color:#ffe033; text-shadow:2px 2px 0 #000,0 0 20px #ff8800; line-height:1; }
 
-.char-name {
-  font-family:'Bebas Neue', sans-serif;
-  font-size:22px;
-  letter-spacing:3px;
-  line-height:1;
-}
-.char-name.leon-col { color:var(--green); text-shadow:0 0 14px rgba(0,229,90,0.7); }
-.char-name.boss-col { color:var(--red); text-shadow:0 0 14px rgba(230,51,18,0.7); }
+#enemy-ui { position:absolute; top:18px; right:24px; text-align:right; }
+#enemy-label { color:#fff; font-size:12px; letter-spacing:2px; text-shadow:1px 1px 3px #000; }
+#enemy-val { font-size:40px; font-weight:900; color:#ff5555; text-shadow:2px 2px 0 #000; line-height:1; }
 
-.hp-row {
-  display:flex; align-items:center; gap:8px;
+#game-title {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  font-size:26px; font-weight:900; color:#ffe033; letter-spacing:4px;
+  text-shadow:0 0 16px #ff9900, 2px 2px 0 #000;
 }
-.char-panel.right .hp-row { flex-direction:row-reverse; }
 
-.hp-icon { font-size:16px; }
-
-.hp-track {
-  width: clamp(150px, 22vw, 280px);
-  height: 18px;
-  background: #0d0d0d;
-  border: 2px solid #2a2a2a;
-  border-radius: 3px;
-  overflow: hidden;
-  position:relative;
+#dmg-flash { position:absolute; inset:0; background:rgba(255,0,0,0); pointer-events:none; transition:background 0.08s; }
+#hit-marker {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  color:#ff4400; font-size:22px; font-weight:900; opacity:0; transition:opacity 0.1s;
+  text-shadow:1px 1px 3px #000; pointer-events:none;
 }
-.hp-track::after {
-  content:'';
-  position:absolute; inset:0;
-  background: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.25) 18px, rgba(0,0,0,0.25) 20px);
+#kill-feed {
+  position:absolute; top:80px; right:24px; text-align:right;
+  color:#ffe033; font-size:13px; font-weight:bold; text-shadow:1px 1px 3px #000; line-height:1.8;
 }
-.hp-fill {
-  height:100%;
-  border-radius:2px;
-  transition: width 0.18s ease-out;
+#hint { position:absolute; bottom:80px; left:28px; color:rgba(255,255,255,0.45); font-size:10px; line-height:2; letter-spacing:1px; }
+#lock-msg {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  color:rgba(255,255,255,0.8); font-size:18px; font-weight:bold;
+  text-shadow:1px 1px 4px #000; text-align:center; pointer-events:none;
+  background:rgba(0,0,0,0.5); padding:12px 24px; border-radius:8px;
 }
-#leon-hfill { background: linear-gradient(90deg,#00b347,#00ff66); box-shadow:0 0 8px rgba(0,229,90,0.5); }
-#boss-hfill  { background: linear-gradient(90deg,#c41a00,#ff4422); box-shadow:0 0 8px rgba(230,51,18,0.5); float:right; }
 
-.hp-numbers {
-  font-family:'Bebas Neue', sans-serif;
-  font-size:15px;
-  letter-spacing:1px;
-  min-width:62px;
-  white-space:nowrap;
+.screen {
+  position:fixed; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; z-index:50;
+  background:rgba(0,0,0,0.85);
 }
-.char-panel.left .hp-numbers { color:var(--green); }
-.char-panel.right .hp-numbers { color:var(--red); text-align:right; }
-
-/* ── Center HUD ── */
-#hud-mid {
-  text-align:center;
-  display:flex; flex-direction:column; align-items:center; gap:3px;
+.screen h1 { font-size:68px; letter-spacing:5px; margin-bottom:8px; }
+.screen p  { font-size:16px; color:#ccc; margin-bottom:6px; }
+.keys { font-size:13px; color:#aaa; margin-bottom:28px; line-height:2.2; text-align:center; }
+.btn {
+  padding:15px 50px; font-size:20px; font-weight:900; letter-spacing:3px;
+  border:none; border-radius:8px; cursor:pointer; pointer-events:all;
+  transition:transform 0.1s, box-shadow 0.1s;
 }
-#hud-stage {
-  font-family:'Press Start 2P', monospace;
-  font-size:8px;
-  color:var(--gold);
-  letter-spacing:2px;
-  text-shadow:0 0 10px rgba(245,200,66,0.5);
-}
-#hud-score {
-  font-family:'Bebas Neue', sans-serif;
-  font-size:26px;
-  color:#fff;
-  letter-spacing:2px;
-  line-height:1;
-}
-#score-label { font-size:8px; color:#444; letter-spacing:2px; font-family:'Press Start 2P',monospace; }
-
-/* ── Special bar (bottom-left) ── */
-#special-bar {
-  position:absolute; bottom:90px; left:14px; z-index:20; pointer-events:none;
-}
-#sp-label { font-family:'Press Start 2P',monospace; font-size:7px; color:#aaa; margin-bottom:4px; }
-#sp-track {
-  width:160px; height:14px;
-  background:#0d0d0d; border:2px solid #1a1a44;
-  border-radius:3px; overflow:hidden;
-}
-#sp-fill { height:100%; background:linear-gradient(90deg,#0055cc,#00aaff); box-shadow:0 0 8px rgba(0,150,255,0.5); transition:width 0.2s; }
-#sp-ready { font-family:'Press Start 2P',monospace; font-size:7px; color:#00aaff; display:none; animation:blink 0.8s infinite; margin-top:3px; }
-
-/* ── Dialog ── */
-#dialog-box { position:absolute; bottom:0; left:0; right:0; z-index:30; background:rgba(5,5,5,0.93); border-top:2px solid var(--red); padding:12px 16px 14px; min-height:80px; display:none; }
-#dlg-speaker { font-family:'Press Start 2P',monospace; font-size:8px; color:var(--gold); margin-bottom:6px; }
-#dlg-text { font-size:12px; color:#e0e0e0; line-height:1.7; }
-#dlg-hint { font-size:8px; color:var(--red); float:right; animation:blink 0.7s infinite; }
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-canvas#gc { display:block; width:100%; height:100%; }
-
-/* ═══ CUTSCENE ═══ */
-#cutscene { background:#000; flex-direction:column; padding:30px; gap:20px; }
-#cs-location { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:6px; color:#555; align-self:flex-start; }
-#cs-art { flex:1; display:flex; align-items:center; justify-content:center; position:relative; }
-#cs-canvas { border:1px solid #1a1a1a; }
-#cs-text-box { width:100%; max-width:700px; background:#0a0a0a; border:1px solid #2a2a2a; border-left:3px solid var(--red); padding:16px 20px; }
-#cs-speaker { font-family:'Press Start 2P',monospace; font-size:8px; color:var(--gold); margin-bottom:8px; }
-#cs-narration { font-size:13px; color:#ccc; line-height:1.8; }
-#cs-continue { font-size:9px; color:var(--red); text-align:right; margin-top:10px; animation:blink 0.8s infinite; }
-
-/* ═══ WIN/LOSE ═══ */
-#result-screen { background:#000; flex-direction:column; gap:18px; text-align:center; }
-#result-title { font-family:'Bebas Neue',sans-serif; font-size:72px; letter-spacing:8px; }
-#result-sub { font-family:'Press Start 2P',monospace; font-size:9px; letter-spacing:3px; color:#666; }
-#result-score { font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--gold); letter-spacing:4px; }
-.result-btn { font-family:'Press Start 2P',monospace; font-size:10px; padding:14px 32px; border:2px solid; background:transparent; cursor:pointer; letter-spacing:2px; transition:all 0.15s; }
-
-#loading { background:#000; flex-direction:column; gap:16px; }
-#loading-bar-bg { width:300px; height:4px; background:#111; border:1px solid #222; }
-#loading-bar { height:100%; background:var(--red); width:0; transition:width 0.4s; }
-#loading-txt { font-size:9px; color:#444; letter-spacing:2px; }
+.btn:hover { transform:scale(1.06); }
+#screen-start h1 { color:#ffe033; text-shadow:0 0 40px #ff9900,3px 3px 0 #000; }
+#screen-start .btn { background:linear-gradient(135deg,#ffe033,#ff9900); color:#000; box-shadow:0 4px 20px rgba(255,153,0,0.5); }
+#screen-win  { display:none; }
+#screen-win  h1 { color:#ffe033; text-shadow:0 0 50px #ffe033; }
+#screen-win  .btn { background:#ffe033; color:#000; }
+#screen-lose { display:none; }
+#screen-lose h1 { color:#ff4444; text-shadow:0 0 50px #ff4444; }
+#screen-lose .btn { background:#ff4444; color:#fff; }
 </style>
 </head>
 <body>
+<canvas id="c"></canvas>
 
-<!-- MENU -->
-<div class="screen active" id="menu">
-  <div id="menu-bg"></div>
-  <div id="menu-stars"></div>
-  <div id="spotlight"></div>
-  <div id="spotlight-ring"></div>
-  <div id="floor-glow"></div>
-  <canvas id="menu-leon" width="120" height="200"></canvas>
-  <div id="menu-content">
-    <div style="margin-bottom:auto;padding-top:clamp(12px,3vw,30px)">
-      <div id="menu-title">LEON</div>
-      <div id="menu-sub">THE METALLICA CHRONICLES</div>
-      <div id="menu-tagline">A guitarist's quest for peace — through riffs.</div>
+<div id="hud">
+  <div id="game-title">🦆 EENDNITE</div>
+  <div id="crosshair"></div>
+  <div id="dmg-flash"></div>
+  <div id="hit-marker">✦</div>
+  <div id="health-ui">
+    <div id="health-label">❤ HEALTH</div>
+    <div id="health-track">
+      <div id="health-fill"></div>
+      <div id="health-num">100 / 100</div>
     </div>
   </div>
-  <div id="menu-bottom">
-    <button class="menu-btn" onclick="goTimeline()">▶ &nbsp; NEW GAME</button>
-    <button class="menu-btn secondary" onclick="showControls()">CONTROLS</button>
+  <div id="ammo-ui">
+    <div id="ammo-label">🍞 BREAD</div>
+    <div id="ammo-val">30</div>
   </div>
-</div>
-
-<!-- QUEST TIMELINE -->
-<div class="screen" id="timeline-screen">
-  <div id="tl-header">QUEST TIMELINE</div>
-  <div id="tl-subtitle">YOUR JOURNEY — ~10 MINUTES</div>
-  <div id="quest-timeline"></div>
-  <button id="tl-start-btn" onclick="beginFromTimeline()">BEGIN QUEST ▶</button>
-</div>
-
-<!-- CUTSCENE -->
-<div class="screen" id="cutscene">
-  <div id="cs-location">LOCATION</div>
-  <div id="cs-art"><canvas id="cs-canvas" width="500" height="220"></canvas></div>
-  <div id="cs-text-box">
-    <div id="cs-speaker"></div>
-    <div id="cs-narration"></div>
-    <div id="cs-continue">▶ CLICK / SPACE TO CONTINUE</div>
+  <div id="enemy-ui">
+    <div id="enemy-label">🦆 ENEMIES</div>
+    <div id="enemy-val">10</div>
   </div>
+  <div id="kill-feed"></div>
+  <div id="hint">W/A/S/D · move &nbsp; SPACE · jump &nbsp; SHIFT · sprint<br>MOUSE · look &nbsp; LEFT CLICK · shoot 🍞</div>
+  <div id="lock-msg" style="display:none">Click to lock mouse &amp; play</div>
 </div>
 
-<!-- GAME -->
-<div class="screen" id="game-screen">
-  <div id="game-wrap">
-    <canvas id="gc"></canvas>
-
-    <!-- BIG HUD -->
-    <div id="hud">
-      <!-- LEON panel -->
-      <div class="char-panel left">
-        <div class="char-name leon-col">⚡ LEON</div>
-        <div class="hp-row">
-          <div class="hp-icon">❤️</div>
-          <div class="hp-track"><div class="hp-fill" id="leon-hfill" style="width:100%"></div></div>
-          <div class="hp-numbers" id="leon-hp-num">100/100</div>
-        </div>
-      </div>
-
-      <!-- Center -->
-      <div id="hud-mid">
-        <div id="hud-stage">STAGE 1</div>
-        <div id="hud-score"><span id="score-val">0</span></div>
-        <div id="score-label">SCORE</div>
-      </div>
-
-      <!-- BOSS panel -->
-      <div class="char-panel right">
-        <div class="char-name boss-col" id="boss-name-lbl">🔥 BOSS</div>
-        <div class="hp-row">
-          <div class="hp-numbers" id="boss-hp-num" style="text-align:right">100/100</div>
-          <div class="hp-track"><div class="hp-fill" id="boss-hfill" style="width:100%;float:right"></div></div>
-          <div class="hp-icon">💀</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Special -->
-    <div id="special-bar">
-      <div id="sp-label">[ X ] GUITAR BLAST</div>
-      <div id="sp-track"><div id="sp-fill" style="width:100%"></div></div>
-      <div id="sp-ready">⚡ READY!</div>
-    </div>
-
-    <div id="dialog-box">
-      <div id="dlg-speaker"></div>
-      <div id="dlg-text"></div>
-      <div id="dlg-hint">▶ SPACE / CLICK</div>
-    </div>
+<div class="screen" id="screen-start">
+  <h1>🦆 EENDNITE</h1>
+  <p style="font-size:20px;color:#ffe033;margin-bottom:14px;">Battle Royale — Duck Edition</p>
+  <div class="keys">
+    W / A / S / D &nbsp;—&nbsp; Move &nbsp;&nbsp;|&nbsp;&nbsp; MOUSE &nbsp;—&nbsp; Look around<br>
+    LEFT CLICK &nbsp;—&nbsp; Shoot 🍞 Bread &nbsp;&nbsp;|&nbsp;&nbsp; SPACE &nbsp;—&nbsp; Jump &nbsp;&nbsp;|&nbsp;&nbsp; SHIFT &nbsp;—&nbsp; Sprint<br>
+    <span style="color:#ffe033">Defeat all 10 enemy ducks to win!</span>
   </div>
+  <button class="btn" id="start-btn">▶ PLAY NOW</button>
 </div>
 
-<!-- RESULT -->
-<div class="screen" id="result-screen">
-  <div id="result-title"></div>
-  <div id="result-sub"></div>
-  <div id="result-score"></div>
-  <div style="display:flex;gap:16px;margin-top:10px">
-    <button class="result-btn" id="result-btn1" onclick="goMenu()">MENU</button>
-    <button class="result-btn" id="result-btn2" onclick="goTimeline()">PLAY AGAIN</button>
-  </div>
+<div class="screen" id="screen-win">
+  <h1>🏆 VICTORY!</h1>
+  <p style="font-size:22px;color:#ffe033;margin-bottom:20px;">All enemy ducks defeated! QUACK!</p>
+  <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
 </div>
 
-<!-- LOADING -->
-<div class="screen" id="loading">
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#333;letter-spacing:6px">LOADING</div>
-  <div id="loading-bar-bg"><div id="loading-bar"></div></div>
-  <div id="loading-txt">preparing the riff...</div>
+<div class="screen" id="screen-lose">
+  <h1>💀 QUACKED</h1>
+  <p style="font-size:20px;color:#ff8888;margin-bottom:20px;">The ducks got you...</p>
+  <button class="btn" onclick="location.reload()">TRY AGAIN</button>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const $ = id => document.getElementById(id);
-function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+'use strict';
 
-// Stars
-(function(){
-  const c=$('menu-stars');
-  for(let i=0;i<80;i++){
-    const s=document.createElement('div'); s.className='mstar';
-    const sz=Math.random()*2+0.5;
-    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${(Math.random()*4+1).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
-    c.appendChild(s);
-  }
-})();
+// ═══════════════════════════════════════
+// GLOBALS
+// ═══════════════════════════════════════
+let renderer, scene, camera, clock;
 
-// Menu Leon
-const mlc=$('menu-leon'), mlx=mlc.getContext('2d');
-let menuFrame=0, showingMenu=true;
-function drawMenuLeon(){
-  mlx.clearRect(0,0,120,200);
-  const bob=Math.sin(menuFrame*0.04)*3;
-  const cx=60,cy=155+bob;
-  mlx.fillStyle='rgba(255,180,50,0.18)'; mlx.beginPath(); mlx.ellipse(60,188,38,8,0,0,Math.PI*2); mlx.fill();
-  mlx.fillStyle='#18182a'; mlx.fillRect(cx-14,cy-2,11,30); mlx.fillRect(cx+3,cy-2,11,30);
-  mlx.fillStyle='#111'; mlx.fillRect(cx-18,cy+27,16,6); mlx.fillRect(cx+1,cy+27,16,6);
-  mlx.fillStyle='#272727'; mlx.fillRect(cx-16,cy-34,32,34);
-  mlx.fillStyle='rgba(180,180,180,0.55)'; mlx.font='bold 6px sans-serif'; mlx.fillText('METALLICA',cx-16,cy-22);
-  mlx.strokeStyle='rgba(160,160,160,0.6)'; mlx.lineWidth=1.5; mlx.beginPath(); mlx.arc(cx,cy-26,9,0.4,Math.PI-0.4); mlx.stroke();
-  mlx.fillStyle='#272727'; mlx.fillRect(cx-25,cy-33,10,26); mlx.fillRect(cx+15,cy-33,10,26);
-  mlx.save(); mlx.translate(cx+8,cy-10); mlx.rotate(0.25+Math.sin(menuFrame*0.04)*0.04);
-  mlx.fillStyle='#4a2800'; mlx.fillRect(-2,-38,4,42);
-  mlx.fillStyle='#7a3a10'; mlx.beginPath(); mlx.ellipse(0,8,10,13,0,0,Math.PI*2); mlx.fill();
-  mlx.strokeStyle='rgba(180,180,180,0.5)'; mlx.lineWidth=0.7;
-  for(let i=-1;i<=1;i++){mlx.beginPath();mlx.moveTo(i*1.2,-38);mlx.lineTo(i*1.2,20);mlx.stroke();}
-  mlx.fillStyle='#4a2800'; mlx.fillRect(-5,-46,10,10); mlx.restore();
-  mlx.fillStyle='#d4956a'; mlx.fillRect(cx-6,cy-44,12,12);
-  mlx.fillStyle='#d4956a'; mlx.beginPath(); mlx.ellipse(cx,cy-56,13,14,0,0,Math.PI*2); mlx.fill();
-  mlx.fillStyle='#a0501a';
-  mlx.beginPath(); mlx.ellipse(cx,cy-63,15,9,0,Math.PI,0); mlx.fill();
-  mlx.beginPath(); mlx.moveTo(cx-14,cy-63); mlx.bezierCurveTo(cx-20,cy-40,cx-18,cy-20,cx-15,cy+2); mlx.lineTo(cx-7,cy+2); mlx.lineTo(cx-7,cy-63); mlx.closePath(); mlx.fill();
-  mlx.beginPath(); mlx.moveTo(cx+14,cy-63); mlx.bezierCurveTo(cx+18,cy-40,cx+16,cy-20,cx+13,cy); mlx.lineTo(cx+7,cy); mlx.lineTo(cx+7,cy-63); mlx.closePath(); mlx.fill();
-  mlx.fillStyle='#c06020'; mlx.fillRect(cx-3,cy-68,6,22);
-  mlx.fillStyle='#fff'; mlx.fillRect(cx-9,cy-60,6,5); mlx.fillRect(cx+3,cy-60,6,5);
-  mlx.fillStyle='#2a1a08'; mlx.fillRect(cx-7,cy-59,3,3); mlx.fillRect(cx+4,cy-59,3,3);
-  mlx.fillStyle='#a0501a'; mlx.fillRect(cx-9,cy-60,6,2); mlx.fillRect(cx+3,cy-60,6,2);
-  mlx.fillStyle='#c07040'; mlx.fillRect(cx-1,cy-53,2,3);
-  mlx.strokeStyle='#8a4020'; mlx.lineWidth=1.2; mlx.beginPath(); mlx.arc(cx,cy-47,4,0.1,Math.PI-0.1); mlx.stroke();
-  menuFrame++;
-  if(showingMenu) requestAnimationFrame(drawMenuLeon);
-}
-drawMenuLeon();
+// Player state
+let player;
+let pPos    = new THREE.Vector3(0, 0, 0);  // logical position
+let pVelY   = 0;
+let onGround = true;
+let pHP     = 100;
+const MAX_HP = 100;
+let ammo    = 30;
+const MAX_AMMO = 30;
 
-// ══════════════════════════════════════════════════════
-//  QUEST DATA
-// ══════════════════════════════════════════════════════
-const QUESTS=[
-  {id:'intro',    name:'THE CALL',      desc:'Leon hears a disturbance at the venue',    icon:'🎸',type:'cutscene',key:'cs_intro'},
-  {id:'town',     name:'THROUGH TOWN',  desc:'Clear the street thugs blocking the path', icon:'⚔️', type:'fight',   key:'fight_town'},
-  {id:'midpoint', name:'OLD FRIEND',    desc:'A familiar face warns Leon of danger',     icon:'💬',type:'cutscene',key:'cs_midpoint'},
-  {id:'naym',     name:'NAYM',          desc:'Boss Fight — The Iron Mountain',           icon:'🏔️', type:'boss',    key:'fight_naym'},
-  {id:'descent',  name:'THE DESCENT',   desc:'Leon enters the shadow realm',             icon:'💀',type:'cutscene',key:'cs_descent'},
-  {id:'roose',    name:'ROOSE',         desc:'Final Boss — The Shadow Sovereign',        icon:'👁️', type:'boss',    key:'fight_roose'},
-  {id:'end',      name:'THE OUTRO',     desc:'Peace returns. The riff plays on.',        icon:'🌅',type:'cutscene',key:'cs_end'},
-];
-let questProgress=0, score=0;
+// Camera
+let camYaw   = 0;     // left-right angle
+let camPitch = 0.22;  // up-down angle (positive = look down slightly)
+const CAM_DIST   = 8.5;
+const CAM_HEIGHT = 3.2;
 
-function buildTimeline(){
-  const qt=$('quest-timeline'); qt.innerHTML='';
-  QUESTS.forEach((q,i)=>{
-    const node=document.createElement('div'); node.className='quest-node';
-    const status=i<questProgress?'complete':i===questProgress?'active':'locked';
-    const badge=i<questProgress?'<span class="qn-badge done">COMPLETE</span>':i===questProgress?'<span class="qn-badge now">CURRENT</span>':'<span class="qn-badge soon">LOCKED</span>';
-    node.innerHTML=`<div class="qn-dot ${status}">${i<questProgress?'✓':q.icon}</div><div class="qn-text"><div class="qn-name">${i+1}. ${q.name}</div><div class="qn-desc">${q.desc}</div>${badge}</div>`;
-    qt.appendChild(node);
-  });
-}
-function goTimeline(){ showingMenu=false; buildTimeline(); showScreen('timeline-screen'); }
-function beginFromTimeline(){ runNextQuest(); }
-function runNextQuest(){
-  if(questProgress>=QUESTS.length){showResult(true);return;}
-  const q=QUESTS[questProgress]; buildTimeline();
-  if(q.type==='cutscene') playCutscene(q.key,()=>{questProgress++;runNextQuest();});
-  else if(q.type==='fight') startFight(q.key,false,()=>{questProgress++;runNextQuest();});
-  else if(q.type==='boss')  startFight(q.key,true, ()=>{questProgress++;runNextQuest();});
-}
+// Input
+const keys = {};
+let pointerLocked = false;
 
-// ══════════════════════════════════════════════════════
-//  CUTSCENES
-// ══════════════════════════════════════════════════════
-const CUTSCENES={
-  cs_intro:[
-    {location:"LEON'S BEDROOM — LATE NIGHT",speaker:'NARRATOR',text:'Leon finishes running through the outro of Sanitarium for the third time. His little sister watches from the doorway, smiling.'},
-    {location:"LEON'S BEDROOM — LATE NIGHT",speaker:'LEON',text:'"Sounds perfect." He sets the guitar down. Then his phone buzzes. A message from an unknown number...'},
-    {location:'',speaker:'UNKNOWN',text:'"The venue has been taken over. Nobody can play. If you want the music back — come alone."'},
-    {location:'',speaker:'LEON',text:'He grabs his guitar, pulls on the Metallica hoodie, and heads into the night. He doesn\'t look back.'},
-  ],
-  cs_midpoint:[
-    {location:'ALLEY BEHIND THE VENUE',speaker:'NARRATOR',text:'Leon stops. Leaning against the wall is someone he hasn\'t seen in months.'},
-    {location:'ALLEY BEHIND THE VENUE',speaker:'OLD FRIEND',text:'"Leon. You shouldn\'t be here. There\'s a man named Naym blocking the main entrance — built like a wall, moves like a freight train. And behind him... Roose."'},
-    {location:'',speaker:'LEON',text:'"Tell me about Naym."'},
-    {location:'',speaker:'OLD FRIEND',text:'"He\'s loyal, disciplined, and hits like a sledgehammer. Don\'t get caught in his grip, Leon. Stay mobile." A pause. "And whatever you do — don\'t let him corner you."'},
-    {location:'',speaker:'LEON',text:'Leon nods once. Already moving.'},
-  ],
-  cs_descent:[
-    {location:'BACKSTAGE — THE VENUE',speaker:'NARRATOR',text:'Naym is down — sitting against the wall, breathing hard, nodding slowly. Respect given.'},
-    {location:'',speaker:'NAYM',text:'"...You earned it, man. Keep going."'},
-    {location:'',speaker:'NARRATOR',text:'The lights flicker and die. Replaced by dim, pulsing violet. Leon steps into the dark.'},
-    {location:'',speaker:'ROOSE',text:'"Impressive. Most people don\'t get past Naym." The voice comes from everywhere. "Come further, Leon. Let\'s end this."'},
-    {location:'',speaker:'LEON',text:'He walks forward. The guitar hums against his back — like it knows what\'s coming.'},
-  ],
-  cs_end:[
-    {location:'THE VENUE — MAIN STAGE',speaker:'NARRATOR',text:'The lights come back on. One by one, the house lights warm up, bathing the empty room in gold.'},
-    {location:'',speaker:'LEON',text:'Leon walks out onto the stage. Looks out at the empty seats, then down at his guitar.'},
-    {location:'',speaker:'NARRATOR',text:'He plugs in. He plays the outro of Sanitarium. Quietly, perfectly — just like in his bedroom.'},
-    {location:'',speaker:'NARRATOR',text:'Somewhere in the back, his sister is leaning in the doorway. She\'s smiling again.'},
-    {location:'',speaker:'LEON',text:'"Yeah." He exhales. "That\'s the one."'},
-  ],
-};
+// World objects
+let enemies   = [];
+let bullets   = [];
+let colBoxes  = [];  // {x,z,hw,hd} half-widths
+let colCircles= [];  // {x,z,r}
 
-let csIdx=0,csList=[],csCallback=null;
-function playCutscene(key,cb){showScreen('cutscene');csList=CUTSCENES[key];csIdx=0;csCallback=cb;showCsLine();}
-function showCsLine(){
-  if(csIdx>=csList.length){if(csCallback)csCallback();return;}
-  const l=csList[csIdx]; $('cs-location').textContent=l.location||''; $('cs-speaker').textContent=l.speaker; $('cs-narration').textContent=l.text;
-  drawCsArt(l.speaker); csIdx++;
-}
-document.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();advanceAnything();}});
-document.getElementById('cutscene').addEventListener('click',advanceAnything);
-function advanceAnything(){
-  if($('cutscene').classList.contains('active')) showCsLine();
-  else if($('game-screen').classList.contains('active')&&dlgActive) advanceDlg();
-}
+// Game state
+let gameActive = false;
+let lastShot   = 0;
+const SHOOT_CD = 280;
+const ARENA_R  = 52;
+const N_ENEMIES = 10;
 
-const csCanvas=$('cs-canvas'), csc=csCanvas.getContext('2d');
-function drawCsArt(speaker){
-  csc.clearRect(0,0,500,220);
-  const g=csc.createLinearGradient(0,0,500,220);
-  g.addColorStop(0,'#080808');g.addColorStop(1,'#111');
-  csc.fillStyle=g;csc.fillRect(0,0,500,220);
-  if(speaker==='LEON'||speaker==='NARRATOR'){
-    drawCsLeon(130,190,1.6);
-    csc.fillStyle='rgba(245,200,66,0.15)';csc.font='bold 60px sans-serif';csc.fillText('LEON',200,170);
-  } else if(speaker==='NAYM'||speaker==='🏔️ NAYM'){
-    drawCsNaym(130,190,1.6);
-    csc.fillStyle='rgba(255,255,255,0.08)';csc.font='bold 60px sans-serif';csc.fillText('NAYM',200,170);
-  } else if(speaker==='ROOSE'||speaker==='💀 ROOSE'){
-    drawCsRoose(130,190,1.6);
-    csc.fillStyle='rgba(123,47,255,0.12)';csc.font='bold 60px sans-serif';csc.fillText('ROOSE',170,170);
-  } else {
-    csc.fillStyle='#1a1a1a';csc.beginPath();csc.ellipse(130,155,25,30,0,0,Math.PI*2);csc.fill();csc.fillRect(105,185,50,60);
-    csc.font='14px monospace';csc.fillStyle='#333';csc.fillText('??? — '+speaker,200,130);
-  }
-}
-function drawCsLeon(x,y,sc){
-  csc.save();csc.translate(x,y);csc.scale(sc,sc);
-  csc.fillStyle='#18182a';csc.fillRect(-10,0,9,22);csc.fillRect(1,0,9,22);
-  csc.fillStyle='#272727';csc.fillRect(-13,-30,26,32);
-  csc.fillStyle='rgba(180,180,180,0.4)';csc.font='5px sans-serif';csc.fillText('METALLICA',-12,-18);
-  csc.fillStyle='#a0501a';
-  csc.beginPath();csc.moveTo(-13,-52);csc.bezierCurveTo(-18,-30,-16,-10,-13,4);csc.lineTo(-6,4);csc.lineTo(-6,-52);csc.closePath();csc.fill();
-  csc.beginPath();csc.moveTo(13,-52);csc.bezierCurveTo(17,-30,15,-10,11,4);csc.lineTo(6,4);csc.lineTo(6,-52);csc.closePath();csc.fill();
-  csc.beginPath();csc.ellipse(0,-60,12,9,0,Math.PI,0);csc.fill();
-  csc.fillStyle='#d4956a';csc.beginPath();csc.ellipse(0,-48,11,13,0,0,Math.PI*2);csc.fill();
-  csc.fillStyle='#fff';csc.fillRect(-7,-52,5,4);csc.fillRect(2,-52,5,4);
-  csc.fillStyle='#2a1a08';csc.fillRect(-5,-51,3,3);csc.fillRect(3,-51,3,3);
-  csc.restore();
-}
-function drawCsNaym(x,y,sc){
-  csc.save();csc.translate(x,y);csc.scale(sc,sc);
-  // Big body
-  csc.fillStyle='#1a1a1a';csc.fillRect(-18,0,36,35); // wide torso
-  csc.fillStyle='#111';csc.fillRect(-16,35,14,26);csc.fillRect(2,35,14,26); // legs
-  csc.fillStyle='#0a0a0a';csc.fillRect(-20,60,18,7);csc.fillRect(2,60,18,7); // shoes
-  // arms wide
-  csc.fillStyle='#1a1a1a';csc.fillRect(-30,2,14,30);csc.fillRect(16,2,14,30);
-  csc.fillStyle='#3a2010';csc.beginPath();csc.ellipse(-23,38,9,8,0,0,Math.PI*2);csc.fill();
-  csc.beginPath();csc.ellipse(23,38,9,8,0,0,Math.PI*2);csc.fill();
-  // neck + head (dark skin)
-  csc.fillStyle='#2a1a0a';csc.fillRect(-7,-12,14,14);
-  csc.fillStyle='#2a1a0a';csc.beginPath();csc.ellipse(0,-26,16,18,0,0,Math.PI*2);csc.fill();
-  // dreads
-  const drCol='#110a04';
-  for(let i=0;i<10;i++){
-    const dx=-18+i*4,dy=-42;
-    csc.fillStyle=drCol;
-    csc.beginPath();csc.ellipse(dx,dy-6,2.5,8,0,0,Math.PI*2);csc.fill();
-    csc.beginPath();csc.moveTo(dx-2.5,dy-6);csc.bezierCurveTo(dx-4,dy+20,dx-5,dy+50,dx-3,dy+70);csc.lineTo(dx+3,dy+70);csc.bezierCurveTo(dx+5,dy+50,dx+4,dy+20,dx+2.5,dy-6);csc.closePath();csc.fill();
-  }
-  // face
-  csc.fillStyle='#fff';csc.fillRect(-9,-30,6,5);csc.fillRect(3,-30,6,5);
-  csc.fillStyle='#111';csc.fillRect(-7,-29,3,3);csc.fillRect(4,-29,3,3);
-  // beard stubble
-  csc.fillStyle='#0d0706';csc.fillRect(-8,-18,16,5);
-  csc.restore();
-}
-function drawCsRoose(x,y,sc){
-  csc.save();csc.translate(x,y);csc.scale(sc,sc);
-  csc.fillStyle='#0a0010';
-  csc.beginPath();csc.moveTo(-18,0);csc.lineTo(-22,50);csc.lineTo(22,50);csc.lineTo(18,0);csc.closePath();csc.fill();
-  csc.fillStyle='#c8a0d4';csc.beginPath();csc.ellipse(0,-28,11,15,0,0,Math.PI*2);csc.fill();
-  csc.fillStyle='#0a0010';
-  csc.beginPath();csc.moveTo(-16,-36);csc.lineTo(0,-54);csc.lineTo(16,-36);csc.lineTo(13,-18);csc.lineTo(-13,-18);csc.closePath();csc.fill();
-  csc.fillStyle='#aa44ff';csc.shadowColor='#aa44ff';csc.shadowBlur=8;
-  csc.fillRect(-7,-33,5,4);csc.fillRect(2,-33,5,4);
-  csc.shadowBlur=0;csc.restore();
-}
+let killFeedTimer = 0;
+let elapsedTime   = 0; // manual elapsed for animations
 
-// ══════════════════════════════════════════════════════
-//  FIGHT ENGINE
-// ══════════════════════════════════════════════════════
-const gc=$('gc'), gctx=gc.getContext('2d');
-let gW,gH,GROUND_Y;
-function resizeCanvas(){gW=gc.width=window.innerWidth;gH=gc.height=window.innerHeight;GROUND_Y=gH*0.72;}
-window.addEventListener('resize',resizeCanvas);resizeCanvas();
+// ═══════════════════════════════════════
+// DUCK FACTORY
+// ═══════════════════════════════════════
+function makeDuck(isPlayer) {
+  const root = new THREE.Group();
 
-let leon_e,boss_e,particles_g,projectiles_g,hitboxes_g,floats_g;
-let gameActive=false,gamePaused=false,dlgActive=false,dlgQueue=[],dlgCb=null,dlgWait=false;
-let cameraShake=0,bgScroll=0,fightCallback=null,phaseDone=false,fightKey='';
-const KEYS={};
-document.addEventListener('keydown',e=>{KEYS[e.code]=true;});
-document.addEventListener('keyup',e=>{KEYS[e.code]=false;});
-$('game-screen').addEventListener('click',()=>{if(dlgActive&&dlgWait)advanceDlg();});
+  const mainColor = isPlayer ? 0xFFD700 : 0xFF4422;
+  const wingColor = isPlayer ? 0xFFC200 : 0xCC2200;
+  const mat  = c => new THREE.MeshLambertMaterial({ color: c });
 
-function resetEntities(){
-  leon_e={x:gW*0.2,y:GROUND_Y,vx:0,vy:0,hp:100,maxHp:100,facing:true,af:0,atk:false,atkTimer:0,special:false,spCd:0,invincible:0,dead:false,jumpReady:true};
-  particles_g=[];projectiles_g=[];hitboxes_g=[];floats_g=[];phaseDone=false;cameraShake=0;
-}
+  // Body
+  const body = new THREE.Mesh(
+    (() => { const g = new THREE.SphereGeometry(0.44, 10, 8); g.scale(1, 0.78, 1.12); return g; })(),
+    mat(mainColor)
+  );
+  body.position.y = 0.36;
+  body.castShadow = true;
+  root.add(body);
 
-const ENEMY_CONFIGS={
-  fight_town: {name:'STREET THUG', hp:60,  maxHp:60,  color:'#3a3a3a',type:'thug',  spd:2,   dmg:10,label:'🗡️ THUG'},
-  fight_naym: {name:'🏔️ NAYM',    hp:180, maxHp:180, color:'#1a1a1a',type:'naym',  spd:2.2, dmg:18,label:'🏔️ NAYM'},
-  fight_roose:{name:'💀 ROOSE',    hp:220, maxHp:220, color:'#7b2fff',type:'roose', spd:1.8, dmg:20,label:'💀 ROOSE'},
-};
+  // Neck pivot (head/beak/eyes follow camera pitch for player)
+  const neckPivot = new THREE.Group();
+  neckPivot.position.set(0, 0.58, 0.18);
+  root.add(neckPivot);
 
-const FIGHT_DIALOGS={
-  fight_town:{
-    intro:[{s:'THUG',t:'Hey — this street is closed.'},{s:'LEON',t:'Not for me.'}],
-    half: [{s:'THUG',t:'You\'re tougher than you look...'},{s:'LEON',t:'Keep moving.'}],
-    end:  [{s:'LEON',t:'Path\'s clear. Let\'s go.'}],
-  },
-  fight_naym:{
-    intro:[{s:'🏔️ NAYM',t:'Nobody passes. That\'s the deal.'},{s:'LEON',t:'I don\'t have time for this, man.'},{s:'🏔️ NAYM',t:'Then let\'s make it quick.'}],
-    half: [{s:'🏔️ NAYM',t:'..Alright. You got something.'},{s:'LEON',t:'Step aside, Naym.'},{s:'🏔️ NAYM',t:'Not yet.'}],
-    end:  [{s:'🏔️ NAYM',t:'...You earned it, man.'},{s:'LEON',t:'Take care of yourself.'}],
-  },
-  fight_roose:{
-    intro:[{s:'💀 ROOSE',t:'You made it. I\'m genuinely surprised.'},{s:'LEON',t:'End this, Roose. Whatever you\'re doing — it stops now.'},{s:'💀 ROOSE',t:'Bold words. Let\'s see.'}],
-    half: [{s:'💀 ROOSE',t:'Unbelievable. FULL POWER!'},{s:'LEON',t:'I\'m not done.'}],
-    end:  [{s:'💀 ROOSE',t:'...The music. I forgot what it felt like.'},{s:'LEON',t:'It\'s not too late to remember.'}],
-  },
-};
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 10, 8), mat(mainColor));
+  head.position.set(0, 0.27, 0.14);
+  head.castShadow = true;
+  neckPivot.add(head);
 
-function startFight(key,isBoss,cb){
-  fightKey=key;fightCallback=cb;
-  const cfg=ENEMY_CONFIGS[key];
-  resetEntities();
-  boss_e={x:gW*0.75,y:GROUND_Y,vx:0,vy:0,hp:cfg.hp,maxHp:cfg.maxHp,facing:false,af:0,atkTimer:0,dead:false,type:cfg.type,spd:cfg.spd,dmg:cfg.dmg,rangeAtk:0};
-  $('boss-name-lbl').textContent=cfg.label;
-  $('hud-stage').textContent=cfg.name;
-  updateHUD();
-  showScreen('game-screen');
-  gameActive=true;
-  queueDialog(FIGHT_DIALOGS[key].intro,()=>{gamePaused=false;});
-  gamePaused=true;
-  if(!gameLoopRunning){gameLoopRunning=true;requestAnimationFrame(gameLoop);}
-}
-
-function queueDialog(lines,cb){dlgQueue=[...lines];dlgCb=cb;dlgActive=true;$('dialog-box').style.display='block';dlgWait=false;showDlgLine();}
-function showDlgLine(){if(!dlgQueue.length){endDialog();return;}const l=dlgQueue.shift();$('dlg-speaker').textContent=l.s;$('dlg-text').textContent=l.t;dlgWait=true;}
-function advanceDlg(){if(!dlgWait)return;dlgWait=false;setTimeout(showDlgLine,80);}
-function endDialog(){dlgActive=false;dlgWait=false;$('dialog-box').style.display='none';if(dlgCb){dlgCb();dlgCb=null;}}
-
-function updateHUD(){
-  const lp=Math.max(0,leon_e.hp/leon_e.maxHp*100);
-  const bp=boss_e?Math.max(0,boss_e.hp/boss_e.maxHp*100):0;
-  $('leon-hfill').style.width=lp+'%';
-  $('boss-hfill').style.width=bp+'%';
-  // Color shift on low HP
-  const lc=lp>50?'linear-gradient(90deg,#00b347,#00ff66)':lp>25?'linear-gradient(90deg,#d4aa00,#ffdd00)':'linear-gradient(90deg,#cc2200,#ff4422)';
-  $('leon-hfill').style.background=lc;
-  $('leon-hp-num').textContent=`${Math.ceil(leon_e.hp)}/${leon_e.maxHp}`;
-  if(boss_e) $('boss-hp-num').textContent=`${Math.ceil(boss_e.hp)}/${boss_e.maxHp}`;
-  $('score-val').textContent=score;
-  const spPct=Math.max(0,Math.min(1,1-(leon_e.spCd/120)));
-  $('sp-fill').style.width=(spPct*100)+'%';
-  $('sp-ready').style.display=leon_e.spCd<=0?'block':'none';
-}
-
-function spawnPart(x,y,col,n,sz){for(let i=0;i<n;i++) particles_g.push({x,y,vx:(Math.random()-.5)*9,vy:(Math.random()-.5)*9-2,life:1,dec:0.025+Math.random()*0.04,col,sz:sz||(2+Math.random()*4)});}
-function spawnFloat(x,y,txt,col){floats_g.push({x,y,txt,col,life:1.2,vy:-1.8});}
-function rOvlp(hx,hy,hw,hh,ex,ey,ew,eh){return hx<ex+ew&&hx+hw>ex&&hy<ey+eh&&hy+hh>ey;}
-
-let gameLoopRunning=false,lastT=0;
-function gameLoop(ts){
-  const raw=(ts-lastT)/16.667;lastT=ts;
-  const dt=Math.min(raw,3);
-  if(gameActive){if(!gamePaused)updateFight(dt);renderFight();bgScroll+=0.4;}
-  requestAnimationFrame(gameLoop);
-}
-
-function updateFight(dt){
-  if(leon_e.dead||!boss_e)return;
-  const spd=4.2;leon_e.vx=0;
-  if(KEYS['ArrowLeft']||KEYS['KeyA']){leon_e.vx=-spd;leon_e.facing=false;}
-  if(KEYS['ArrowRight']||KEYS['KeyD']){leon_e.vx=spd;leon_e.facing=true;}
-  if((KEYS['ArrowUp']||KEYS['KeyW'])&&leon_e.y>=GROUND_Y-1&&leon_e.jumpReady){leon_e.vy=-16;leon_e.jumpReady=false;}
-  if(!(KEYS['ArrowUp']||KEYS['KeyW']))leon_e.jumpReady=true;
-  leon_e.vy+=0.65*dt;leon_e.y+=leon_e.vy*dt;
-  if(leon_e.y>=GROUND_Y){leon_e.y=GROUND_Y;leon_e.vy=0;leon_e.jumpReady=true;}
-  leon_e.x+=leon_e.vx*dt;leon_e.x=Math.max(20,Math.min(gW-20,leon_e.x));
-  if(leon_e.atkTimer>0)leon_e.atkTimer-=dt;
-  if(leon_e.spCd>0)leon_e.spCd-=dt;
-  if(leon_e.invincible>0)leon_e.invincible-=dt;
-  if((KEYS['KeyZ']||KEYS['KeyJ'])&&leon_e.atkTimer<=0){
-    leon_e.atk=true;leon_e.special=false;leon_e.atkTimer=14;
-    const hx=leon_e.facing?leon_e.x+10:leon_e.x-70;
-    hitboxes_g.push({x:hx,y:leon_e.y-50,w:65,h:55,dmg:13,timer:8,owner:'leon'});
-    spawnPart(leon_e.x+(leon_e.facing?45:-45),leon_e.y-30,'#f5c842',5,4);
-  }
-  if(KEYS['KeyX']&&leon_e.spCd<=0&&leon_e.atkTimer<=0){
-    leon_e.atk=true;leon_e.special=true;leon_e.atkTimer=28;leon_e.spCd=120;
-    for(let i=0;i<3;i++)hitboxes_g.push({x:leon_e.x-90+i*40,y:leon_e.y-70,w:90,h:75,dmg:28,timer:14,owner:'leon'});
-    spawnPart(leon_e.x,leon_e.y-30,'#f5c842',22,6);cameraShake=12;score+=15;
-  }
-  if(leon_e.atkTimer<=4){leon_e.atk=false;leon_e.special=false;}
-  leon_e.af+=dt;
-
-  boss_e.af+=dt;boss_e.atkTimer-=dt;boss_e.rangeAtk-=dt;
-  const dx=leon_e.x-boss_e.x;boss_e.facing=dx<0;
-  const rage=1-(boss_e.hp/boss_e.maxHp);
-  if(Math.abs(dx)>120) boss_e.x+=(dx>0?1:-1)*(boss_e.spd+rage*1.5)*dt;
-  boss_e.x=Math.max(gW*0.3,Math.min(gW-30,boss_e.x));boss_e.y=GROUND_Y;
-  if(boss_e.atkTimer<=0&&Math.abs(dx)<150){
-    boss_e.atkTimer=55-rage*18;
-    const bx=dx>0?boss_e.x+10:boss_e.x-80;
-    const bw=boss_e.type==='naym'?90:72;
-    hitboxes_g.push({x:bx,y:boss_e.y-60,w:bw,h:60,dmg:boss_e.dmg,timer:12,owner:'boss'});
-    spawnPart(boss_e.x+(dx>0?55:-55),boss_e.y-30,boss_e.type==='roose'?'#aa44ff':boss_e.type==='naym'?'#888':'#ff4400',8,5);
-    cameraShake=boss_e.type==='naym'?12:5;
-  }
-  if(boss_e.type==='roose'&&rage>0.35&&boss_e.rangeAtk<=0){
-    boss_e.rangeAtk=70-rage*20;
-    projectiles_g.push({x:boss_e.x,y:boss_e.y-35,vx:dx>0?5.5:-5.5,vy:-2,life:90,type:'roose'});
-  }
-  // Naym ground slam at rage
-  if(boss_e.type==='naym'&&rage>0.5&&boss_e.atkTimer<=0&&Math.abs(dx)<200){
-    cameraShake=8;
-    spawnPart(boss_e.x,boss_e.y,'#555',14,7);
-  }
-  if(!phaseDone&&boss_e.hp<=boss_e.maxHp*0.5){
-    phaseDone=true;gamePaused=true;cameraShake=20;
-    queueDialog(FIGHT_DIALOGS[fightKey].half,()=>{gamePaused=false;});
-  }
-
-  hitboxes_g=hitboxes_g.filter(h=>{
-    h.timer-=dt;if(h.timer<=0)return false;
-    if(h.owner==='leon'&&boss_e&&!boss_e.dead){
-      if(rOvlp(h.x,h.y,h.w,h.h,boss_e.x-24,boss_e.y-68,48,68)){
-        boss_e.hp=Math.max(0,boss_e.hp-h.dmg);score+=h.dmg;
-        spawnPart(boss_e.x,boss_e.y-40,'#e63312',6,5);spawnFloat(boss_e.x,boss_e.y-80,`-${h.dmg}`,'#e63312');
-        updateHUD();h.timer=0;
-        if(boss_e.hp<=0&&!boss_e.dead){
-          boss_e.dead=true;gamePaused=true;spawnPart(boss_e.x,boss_e.y-40,boss_e.type==='roose'?'#aa44ff':'#aaa',30,7);cameraShake=25;
-          queueDialog(FIGHT_DIALOGS[fightKey].end,()=>{gameActive=false;if(fightCallback){fightCallback();fightCallback=null;}});
-        }
-        return false;
-      }
-    }
-    if(h.owner==='boss'&&!leon_e.dead&&leon_e.invincible<=0){
-      if(rOvlp(h.x,h.y,h.w,h.h,leon_e.x-16,leon_e.y-54,32,54)){
-        leon_e.hp=Math.max(0,leon_e.hp-h.dmg);leon_e.invincible=40;cameraShake=8;
-        spawnPart(leon_e.x,leon_e.y-35,'#ff4444',8,4);spawnFloat(leon_e.x,leon_e.y-75,`-${h.dmg}`,'#ff6633');
-        updateHUD();h.timer=0;
-        if(leon_e.hp<=0&&!leon_e.dead){leon_e.dead=true;setTimeout(()=>showResult(false),1800);}
-        return false;
-      }
-    }
-    return true;
-  });
-
-  projectiles_g=projectiles_g.filter(p=>{
-    p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=0.18*dt;p.life-=dt;
-    if(p.y>GROUND_Y+30||p.life<=0)return false;
-    if(!leon_e.dead&&leon_e.invincible<=0&&Math.abs(p.x-leon_e.x)<20&&Math.abs(p.y-(leon_e.y-28))<28){
-      leon_e.hp=Math.max(0,leon_e.hp-18);leon_e.invincible=40;
-      spawnPart(leon_e.x,leon_e.y-30,'#aa44ff',6,4);spawnFloat(leon_e.x,leon_e.y-75,'-18','#aa44ff');
-      updateHUD();if(leon_e.hp<=0&&!leon_e.dead){leon_e.dead=true;setTimeout(()=>showResult(false),1800);}return false;
-    }
-    return true;
-  });
-  particles_g=particles_g.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=0.28*dt;p.life-=p.dec*dt;return p.life>0;});
-  floats_g=floats_g.filter(t=>{t.y+=t.vy*dt;t.life-=0.022*dt;return t.life>0;});
-  if(cameraShake>0)cameraShake-=dt;
-}
-
-// ══════════════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════════════
-function renderFight(){
-  gctx.clearRect(0,0,gW,gH);
-  const sx=cameraShake>0?(Math.random()-.5)*cameraShake:0;
-  const sy=cameraShake>0?(Math.random()-.5)*cameraShake:0;
-  gctx.save();gctx.translate(sx,sy);
-  drawBg();
-  particles_g.forEach(p=>{gctx.globalAlpha=p.life;gctx.fillStyle=p.col;gctx.beginPath();gctx.arc(p.x,p.y,p.sz,0,Math.PI*2);gctx.fill();});
-  gctx.globalAlpha=1;
-  projectiles_g.forEach(p=>{gctx.fillStyle='#9933ff';gctx.shadowColor='#6600aa';gctx.shadowBlur=12;gctx.beginPath();gctx.arc(p.x,p.y,9,0,Math.PI*2);gctx.fill();gctx.shadowBlur=0;});
-  if(boss_e&&!boss_e.dead)drawBoss(boss_e);
-  if(!leon_e.dead&&(leon_e.invincible<=0||Math.floor(Date.now()/70)%2===0))
-    drawLeon(leon_e.x,leon_e.y,leon_e.facing,leon_e.af,leon_e.atk,leon_e.special);
-  floats_g.forEach(t=>{gctx.globalAlpha=Math.min(1,t.life);gctx.fillStyle=t.col;gctx.font='bold 14px monospace';gctx.fillText(t.txt,t.x-16,t.y);gctx.globalAlpha=1;});
-  gctx.restore();
-}
-
-function drawBg(){
-  const t=boss_e?boss_e.type:'thug';
-  if(t==='thug'||t==='naym'){
-    const g=gctx.createLinearGradient(0,0,0,gH);
-    g.addColorStop(0,'#050510');g.addColorStop(1,'#0a0808');
-    gctx.fillStyle=g;gctx.fillRect(0,0,gW,gH);
-    gctx.fillStyle='#0d0d18';
-    [{x:0,w:110,h:180},{x:90,w:70,h:230},{x:160,w:90,h:160},{x:gW-200,w:90,h:200},{x:gW-130,w:80,h:260},{x:gW-70,w:80,h:190}].forEach(b=>{gctx.fillRect(b.x,gH-GROUND_Y+GROUND_Y-b.h-40,b.w,b.h+40);});
-    gctx.fillStyle='rgba(255,200,80,0.25)';
-    for(let i=0;i<30;i++){const wx=(i*67+100)%gW,wy=gH-GROUND_Y+40+Math.floor(i/3)*30;if(wx>80&&wx<gW-80)gctx.fillRect(wx,wy,6,8);}
-    gctx.strokeStyle='#333';gctx.lineWidth=3;
-    [120,gW-140].forEach(lx=>{
-      gctx.beginPath();gctx.moveTo(lx,GROUND_Y);gctx.lineTo(lx,GROUND_Y-140);gctx.stroke();
-      gctx.shadowColor='#ffcc44';gctx.shadowBlur=20;
-      gctx.fillStyle='rgba(255,200,60,0.15)';gctx.beginPath();gctx.arc(lx,GROUND_Y-140,30,0,Math.PI*2);gctx.fill();gctx.shadowBlur=0;
-    });
-    const gg=gctx.createLinearGradient(0,GROUND_Y,0,gH);gg.addColorStop(0,'#181818');gg.addColorStop(1,'#0a0a0a');
-    gctx.fillStyle=gg;gctx.fillRect(0,GROUND_Y,gW,gH-GROUND_Y);
-    gctx.strokeStyle='#222';gctx.lineWidth=1;
-    for(let i=0;i<gW;i+=80){gctx.beginPath();gctx.moveTo(i,GROUND_Y+8);gctx.lineTo(i+40,GROUND_Y+8);gctx.stroke();}
-  } else if(t==='roose'){
-    const g=gctx.createLinearGradient(0,0,0,gH);g.addColorStop(0,'#010008');g.addColorStop(1,'#050015');
-    gctx.fillStyle=g;gctx.fillRect(0,0,gW,gH);
-    for(let i=0;i<70;i++){const vx=(i*137+bgScroll*0.3)%gW,vy=(i*97)%(GROUND_Y-20);const br=0.2+Math.sin(Date.now()/600+i)*0.3;gctx.fillStyle=`rgba(160,80,255,${br})`;gctx.beginPath();gctx.arc(vx,vy,1.5,0,Math.PI*2);gctx.fill();}
-    for(let i=0;i<4;i++){const rx=80+i*200,ry=GROUND_Y-180+Math.sin(Date.now()/1000+i)*18;gctx.fillStyle='#0d001a';gctx.fillRect(rx,ry,90,22);gctx.strokeStyle='#5500aa';gctx.lineWidth=1;gctx.strokeRect(rx,ry,90,22);}
-    gctx.strokeStyle='#5500aa';gctx.shadowColor='#5500aa';gctx.shadowBlur=10;gctx.lineWidth=2;
-    for(let i=0;i<6;i++){gctx.beginPath();gctx.moveTo(i*150+20,GROUND_Y);gctx.lineTo(i*150+60,gH);gctx.stroke();}
-    gctx.shadowBlur=0;gctx.fillStyle='#0c0018';gctx.fillRect(0,GROUND_Y,gW,gH-GROUND_Y);
-  }
-  gctx.fillStyle='#111';gctx.fillRect(0,GROUND_Y,gW,3);
-}
-
-// ─── Leon ───
-function drawLeon(x,y,fR,af,atk,sp){
-  const c=gctx;c.save();c.translate(x,y);if(!fR)c.scale(-1,1);
-  const bob=atk?Math.sin(af*0.5)*4:Math.sin(af*0.12)*2;
-  c.fillStyle='rgba(0,0,0,0.25)';c.beginPath();c.ellipse(0,2,20,6,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#18182a';c.fillRect(-12,26+bob,10,24);c.fillRect(2,26-bob,10,24);
-  c.fillStyle='#111';c.fillRect(-15,48+bob,15,6);c.fillRect(0,48-bob,15,6);
-  c.fillStyle='#282828';c.fillRect(-14,0,28,28);
-  c.fillStyle='rgba(255,255,255,0.04)';c.fillRect(-14,0,28,2);c.fillRect(-14,26,28,2);
-  c.fillStyle='rgba(200,200,200,0.45)';c.font='bold 5px sans-serif';c.fillText('METALLICA',-14,16);
-  c.strokeStyle='rgba(180,180,180,0.55)';c.lineWidth=1.5;c.beginPath();c.arc(0,8,8,0.35,Math.PI-0.35);c.stroke();
-  c.fillStyle='#282828';
-  const aSwing=atk?Math.sin(af*0.7)*18:Math.sin(af*0.12)*6;
-  c.save();c.translate(-14,10);c.rotate(aSwing*Math.PI/180);c.fillRect(-5,0,9,22);c.restore();
-  c.save();c.translate(14,10);c.rotate(-aSwing*Math.PI/180);c.fillRect(-4,0,9,22);c.restore();
-  if(atk){
-    c.save();c.translate(6,16);c.rotate(Math.sin(af*0.7)*0.9);drawGtr(c,0,0,1.0,'#7a3a10');c.restore();
-    if(sp){c.fillStyle='rgba(245,200,66,0.35)';c.beginPath();c.arc(36,0,40,0,Math.PI*2);c.fill();c.strokeStyle='#f5c842';c.lineWidth=3;c.beginPath();c.arc(36,0,50,-.3,.3);c.stroke();}
-    else{c.strokeStyle='#f5c842';c.lineWidth=2.5;c.beginPath();c.arc(24,4,24,-.4,.4);c.stroke();}
-  } else {
-    c.save();c.translate(-8,12);c.rotate(-0.3);drawGtr(c,0,0,0.78,'#5a2800');c.restore();
-  }
-  c.fillStyle='#d4956a';c.fillRect(-5,-10,10,12);
-  c.fillStyle='#d4956a';c.beginPath();c.ellipse(0,-22,12,14,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#a0501a';
-  c.beginPath();c.ellipse(0,-28,14,9,0,Math.PI,0);c.fill();
-  c.beginPath();c.moveTo(-13,-28);c.bezierCurveTo(-19,-10,-17,8,-14,28+bob);c.lineTo(-6,28+bob);c.lineTo(-6,-28);c.closePath();c.fill();
-  c.beginPath();c.moveTo(13,-28);c.bezierCurveTo(18,-10,16,6,12,26-bob);c.lineTo(6,26-bob);c.lineTo(6,-28);c.closePath();c.fill();
-  c.fillStyle='#c07030';c.fillRect(-3,-30,6,22);
-  c.fillStyle='#fff';c.fillRect(-8,-26,6,5);c.fillRect(2,-26,6,5);
-  c.fillStyle='#2a1a08';c.fillRect(-6,-25,3,3);c.fillRect(3,-25,3,3);
-  c.fillStyle='#a0501a';c.fillRect(-8,-26,6,2);c.fillRect(2,-26,6,2);
-  c.fillStyle='#c07040';c.fillRect(-1,-19,2,3);
-  c.restore();
-}
-function drawGtr(c,x,y,sc,col){
-  c.save();c.translate(x,y);c.scale(sc,sc);
-  c.fillStyle=col;c.beginPath();c.ellipse(0,8,11,14,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#3a1800';c.fillRect(-2,-34,4,40);
-  c.strokeStyle='rgba(180,180,180,0.5)';c.lineWidth=0.6;
-  for(let i=-1;i<=1;i++){c.beginPath();c.moveTo(i,-34);c.lineTo(i,20);c.stroke();}
-  c.fillStyle='#3a1800';c.fillRect(-5,-42,10,10);c.restore();
-}
-
-// ─── NAYM: Big black guy with dreads ───
-function drawNaym(x,y,fR,af){
-  const c=gctx;c.save();c.translate(x,y);if(fR)c.scale(-1,1);
-  const bob=Math.sin(af*0.1)*2;
-  const rage_factor=boss_e?(1-(boss_e.hp/boss_e.maxHp)):0;
-
-  // Shadow (big)
-  c.fillStyle='rgba(0,0,0,0.35)';c.beginPath();c.ellipse(0,3,34,9,0,0,Math.PI*2);c.fill();
-
-  // Legs — thick
-  c.fillStyle='#111';c.fillRect(-20,34+bob,18,30);c.fillRect(2,34-bob,18,30);
-  // Boots
-  c.fillStyle='#080808';c.fillRect(-24,62+bob,22,9);c.fillRect(0,62-bob,22,9);
-
-  // Torso — very wide
-  c.fillStyle='#1a1a1a';c.fillRect(-26,-2,52,38);
-  // Shirt detail lines (muscle definition)
-  c.strokeStyle='#111';c.lineWidth=1.5;
-  c.beginPath();c.moveTo(0,-2);c.lineTo(0,36);c.stroke();
-  c.beginPath();c.moveTo(-26,14);c.lineTo(26,14);c.stroke();
-  // Tag / design
-  if(rage_factor>0.5){
-    c.fillStyle='rgba(255,80,0,0.2)';c.fillRect(-26,-2,52,38);
-  }
-
-  // Arms — massive
-  c.fillStyle='#1e1e1e';
-  c.beginPath();c.moveTo(-26,0);c.lineTo(-42,6);c.lineTo(-40,42);c.lineTo(-22,40);c.lineTo(-26,0);c.fill();
-  c.beginPath();c.moveTo(26,0);c.lineTo(42,6);c.lineTo(40,42);c.lineTo(22,40);c.lineTo(26,0);c.fill();
-
-  // Fists
-  c.fillStyle='#2a1a0a';
-  c.beginPath();c.ellipse(-38,44,11,10,0.2,0,Math.PI*2);c.fill();
-  c.beginPath();c.ellipse(38,44,11,10,-0.2,0,Math.PI*2);c.fill();
-  // knuckles
-  c.fillStyle='rgba(255,255,255,0.07)';
-  for(let k=-1;k<=1;k++){c.beginPath();c.ellipse(-38+k*3.5,42,2,2,0,0,Math.PI*2);c.fill();}
-  for(let k=-1;k<=1;k++){c.beginPath();c.ellipse(38+k*3.5,42,2,2,0,0,Math.PI*2);c.fill();}
-
-  // Neck
-  c.fillStyle='#2a1a0a';c.fillRect(-9,-15,18,15);
-
-  // Head
-  c.fillStyle='#2a1a0a';c.beginPath();c.ellipse(0,-32,20,22,0,0,Math.PI*2);c.fill();
-
-  // ── Dreads ──
-  const drBase='#0d0806', drHi='#1a1008';
-  // draw behind head first
-  const drCount=14;
-  for(let i=0;i<drCount;i++){
-    const t=i/(drCount-1);
-    const bx=-20+t*40;
-    const by=-50;
-    // thickness varies
-    const thick=2.5+Math.sin(i*1.2)*0.8;
-    // length varies
-    const len=55+Math.sin(i*0.8)*25+Math.cos(i*1.4)*15;
-    const swing=Math.sin(af*0.1+i*0.4)*4*rage_factor;
-    c.fillStyle=i%2===0?drBase:drHi;
-    c.beginPath();
-    c.moveTo(bx-thick,by);
-    // bezier droop
-    c.bezierCurveTo(bx-thick+swing,by+len*0.4, bx-thick*0.5+swing*1.5,by+len*0.7, bx+swing,by+len);
-    c.lineTo(bx+swing+thick*0.5,by+len);
-    c.bezierCurveTo(bx+thick*0.5+swing*1.5,by+len*0.7, bx+thick+swing,by+len*0.4, bx+thick,by);
-    c.closePath();c.fill();
-    // dread tip
-    c.fillStyle='#0a0604';c.beginPath();c.ellipse(bx+swing,by+len,thick*0.4,thick*0.6,0,0,Math.PI*2);c.fill();
-  }
-
-  // Beard / stubble shadow
-  c.fillStyle='rgba(0,0,0,0.5)';c.fillRect(-14,-23,28,10);
-  c.fillStyle='rgba(0,0,0,0.3)';c.beginPath();c.ellipse(0,-13,14,5,0,0,Math.PI*2);c.fill();
+  // Beak
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.22, 6), mat(0xFF9900));
+  beak.rotation.x = Math.PI / 2;
+  beak.position.set(0, 0.25, 0.40);
+  neckPivot.add(beak);
 
   // Eyes
-  const eyeWhite='#e8e0d0';
-  c.fillStyle=eyeWhite;c.beginPath();c.ellipse(-9,-36,6,5,0,0,Math.PI*2);c.fill();
-  c.fillStyle=eyeWhite;c.beginPath();c.ellipse(9,-36,6,5,0,0,Math.PI*2);c.fill();
-  // Iris
-  c.fillStyle='#3a2800';c.beginPath();c.ellipse(-9,-36,3.5,4,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#3a2800';c.beginPath();c.ellipse(9,-36,3.5,4,0,0,Math.PI*2);c.fill();
-  // Pupils
-  c.fillStyle='#000';c.beginPath();c.ellipse(-9,-36,1.5,2,0,0,Math.PI*2);c.fill();
-  c.fillStyle='#000';c.beginPath();c.ellipse(9,-36,1.5,2,0,0,Math.PI*2);c.fill();
-  // Brow (intense)
-  c.strokeStyle='#0a0604';c.lineWidth=2.5;
-  c.beginPath();c.moveTo(-15,-42);c.lineTo(-3,-39);c.stroke();
-  c.beginPath();c.moveTo(15,-42);c.lineTo(3,-39);c.stroke();
+  [-0.10, 0.10].forEach(ox => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6), mat(0x111111));
+    eye.position.set(ox, 0.31, 0.37);
+    neckPivot.add(eye);
+  });
 
-  // Nose broad
-  c.fillStyle='#1e1008';c.beginPath();c.ellipse(0,-28,5,4,0,0,Math.PI*2);c.fill();
+  // Wings
+  const wGeo = (() => { const g = new THREE.SphereGeometry(0.20, 8, 6); return g; })();
+  const wL = new THREE.Mesh(wGeo, mat(wingColor));
+  wL.scale.set(0.38, 0.68, 1.0);
+  wL.position.set(-0.47, 0.37, 0.04);
+  root.add(wL);
 
-  // Mouth — determined / slight scowl
-  c.strokeStyle='#0a0604';c.lineWidth=2;
-  c.beginPath();c.moveTo(-8,-18);c.lineTo(8,-18);c.stroke();
-  if(rage_factor>0.5){
-    // rage grimace
-    c.beginPath();c.moveTo(-10,-20);c.lineTo(-6,-16);c.stroke();
-    c.beginPath();c.moveTo(10,-20);c.lineTo(6,-16);c.stroke();
+  const wR = new THREE.Mesh(wGeo.clone(), mat(wingColor));
+  wR.scale.set(0.38, 0.68, 1.0);
+  wR.position.set(0.47, 0.37, 0.04);
+  root.add(wR);
+
+  // Tail
+  const tail = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 5), mat(wingColor));
+  tail.scale.set(0.7, 0.7, 0.5);
+  tail.position.set(0, 0.41, -0.42);
+  root.add(tail);
+
+  // Feet
+  const fGeo = new THREE.BoxGeometry(0.16, 0.055, 0.26);
+  [-0.15, 0.15].forEach(ox => {
+    const foot = new THREE.Mesh(fGeo, mat(0xFF9900));
+    foot.position.set(ox, 0.03, 0.08);
+    root.add(foot);
+  });
+
+  // Player hat
+  if (isPlayer) {
+    const hatMat = mat(0x1133BB);
+    const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.055, 12), hatMat);
+    brim.position.set(0, 0.31, 0.14);
+    neckPivot.add(brim);
+    const top = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.30, 12), hatMat);
+    top.position.set(0, 0.49, 0.14);
+    neckPivot.add(top);
+    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.202, 0.202, 0.058, 12), mat(0xFFCC00));
+    band.position.set(0, 0.32, 0.14);
+    neckPivot.add(band);
   }
 
-  // rage aura
-  if(rage_factor>0.5){
-    c.strokeStyle=`rgba(255,100,0,${(rage_factor-0.5)*0.6})`;c.lineWidth=3;
-    c.beginPath();c.arc(0,-20,50,0,Math.PI*2);c.stroke();
-  }
-
-  c.restore();
+  root.userData.wL = wL;
+  root.userData.wR = wR;
+  root.userData.neck = neckPivot;
+  return root;
 }
 
-// ─── Boss dispatcher ───
-function drawBoss(b){
-  if(b.type==='naym'){ drawNaym(b.x,b.y,b.facing,b.af); return; }
-  const c=gctx;c.save();c.translate(b.x,b.y);if(b.facing)c.scale(-1,1);
-  const bob=Math.sin(b.af*0.18)*3;const rage=1-(b.hp/b.maxHp);
-  if(b.type==='thug'){
-    c.fillStyle='rgba(0,0,0,0.25)';c.beginPath();c.ellipse(0,2,22,6,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#1a1a1a';c.fillRect(-13,26+bob,11,24);c.fillRect(2,26-bob,11,24);
-    c.fillStyle='#111';c.fillRect(-16,48+bob,16,6);c.fillRect(0,48-bob,16,6);
-    c.fillStyle='#2d2d2d';c.fillRect(-15,0,30,28);c.fillStyle='#aaa';c.font='bold 5px sans-serif';c.fillText('THUG',-10,15);
-    c.fillStyle='#2d2d2d';c.fillRect(-24,4,10,26);c.fillRect(14,4,10,26);
-    c.fillStyle='#c08060';c.beginPath();c.ellipse(-19,32,7,6,0,0,Math.PI*2);c.fill();c.beginPath();c.ellipse(19,32,7,6,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#c08060';c.beginPath();c.ellipse(0,-20,13,14,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#1a1a1a';c.beginPath();c.ellipse(0,-28,13,8,0,Math.PI,0);c.fill();
-    c.fillStyle='#fff';c.fillRect(-8,-23,5,4);c.fillRect(3,-23,5,4);
-    c.fillStyle='#333';c.fillRect(-7,-22,3,3);c.fillRect(4,-22,3,3);
-    c.strokeStyle='#333';c.lineWidth=2;c.beginPath();c.moveTo(-7,-26);c.lineTo(-2,-24);c.stroke();c.beginPath();c.moveTo(7,-26);c.lineTo(2,-24);c.stroke();
-    if(rage>0.5){c.fillStyle='rgba(255,0,0,0.3)';c.beginPath();c.arc(0,-20,16,0,Math.PI*2);c.fill();}
+// ═══════════════════════════════════════
+// BREAD PROJECTILE
+// ═══════════════════════════════════════
+function makeBread() {
+  const g = new THREE.Group();
+  const m = c => new THREE.MeshLambertMaterial({ color: c });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.14, 0.26), m(0xD4A040));
+  g.add(body);
+  const crust = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.09, 0.28), m(0x8B4513));
+  crust.position.y = -0.055;
+  g.add(crust);
+  for (let i = 0; i < 4; i++) {
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 4, 4), m(0xFFF8DC));
+    dot.position.set((Math.random() - 0.5) * 0.12, 0.07, (Math.random() - 0.5) * 0.16);
+    g.add(dot);
+  }
+  return g;
+}
+
+// ═══════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════
+function buildMap() {
+  const m = c => new THREE.MeshLambertMaterial({ color: c });
+
+  // Sky
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(220, 20, 20),
+    new THREE.MeshBasicMaterial({ color: 0x6AAEE8, side: THREE.BackSide })
+  );
+  scene.add(sky);
+
+  // Clouds
+  for (let i = 0; i < 12; i++) {
+    const cg = new THREE.Group();
+    const a = (i / 12) * Math.PI * 2;
+    cg.position.set(Math.cos(a) * (70 + Math.random() * 30), 38 + Math.random() * 18, Math.sin(a) * (70 + Math.random() * 30));
+    for (let j = 0; j < 4; j++) {
+      const c = new THREE.Mesh(
+        new THREE.SphereGeometry(3 + Math.random() * 3, 8, 6),
+        new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
+      );
+      c.position.set((Math.random() - 0.5) * 7, Math.random() * 2, (Math.random() - 0.5) * 4);
+      cg.add(c);
+    }
+    scene.add(cg);
+  }
+
+  // Ground
+  const ground = new THREE.Mesh(
+    new THREE.CylinderGeometry(ARENA_R, ARENA_R * 1.04, 1.0, 60),
+    m(0x5BAD3E)
+  );
+  ground.position.y = -0.5;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Dirt edge
+  scene.add(Object.assign(
+    new THREE.Mesh(new THREE.CylinderGeometry(ARENA_R * 1.04, ARENA_R * 1.10, 0.7, 60), m(0xA0783C)),
+    { position: new THREE.Vector3(0, -0.7, 0) }
+  ));
+
+  // Ocean
+  const ocean = new THREE.Mesh(new THREE.CircleGeometry(300, 48), m(0x1A75C4));
+  ocean.rotation.x = -Math.PI / 2;
+  ocean.position.y = -1.6;
+  scene.add(ocean);
+
+  // Pond
+  const pond = new THREE.Mesh(new THREE.CircleGeometry(7, 32), new THREE.MeshLambertMaterial({ color: 0x2288CC, side: THREE.DoubleSide }));
+  pond.rotation.x = -Math.PI / 2;
+  pond.position.set(16, 0.02, -8);
+  scene.add(pond);
+
+  // Dirt path (Z axis)
+  const path = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 80), new THREE.MeshLambertMaterial({ color: 0xC8A060, side: THREE.DoubleSide }));
+  path.rotation.x = -Math.PI / 2;
+  path.position.y = 0.01;
+  scene.add(path);
+
+  // Trees
+  const treePos = [
+    [-20,-20],[-26,8],[-14,26],[12,-30],[30,-14],
+    [26,24],[-30,-4],[14,36],[-10,-38],[36,4],
+    [-38,18],[24,-36],[-26,30],[4,42],[-40,-22],
+    [40,-30],[-8,44],[32,32]
+  ];
+  treePos.forEach(([x, z]) => {
+    scene.add(buildTree(x, z));
+    colCircles.push({ x, z, r: 1.1 });
+  });
+
+  // Crates & rocks
+  const obsData = [
+    { x:-8,  z:12,  w:2.4, h:1.8, d:2.4, c:0x8B6410 },
+    { x:10,  z:8,   w:2,   h:1.4, d:2,   c:0x8B6410 },
+    { x:-12, z:-8,  w:3,   h:1.2, d:1.5, c:0x888888 },
+    { x:14,  z:-14, w:1.8, h:2.2, d:1.8, c:0x666666 },
+    { x:5,   z:22,  w:2.2, h:1.6, d:2.2, c:0x8B6410 },
+    { x:-20, z:15,  w:1.5, h:1.0, d:2.5, c:0x777777 },
+    { x:22,  z:0,   w:2,   h:1.8, d:2,   c:0x8B6410 },
+    { x:-5,  z:-20, w:2.4, h:1.4, d:1.6, c:0x888888 },
+    { x:0,   z:16,  w:1.6, h:2.0, d:1.6, c:0x8B6410 },
+    { x:-30, z:-18, w:3,   h:1.5, d:3,   c:0x777777 },
+    { x:28,  z:14,  w:2,   h:1.2, d:2,   c:0x8B6410 },
+    { x:-16, z:30,  w:2.5, h:1.6, d:1.8, c:0x666666 },
+  ];
+  obsData.forEach(od => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(od.w, od.h, od.d), m(od.c));
+    mesh.position.set(od.x, od.h / 2, od.z);
+    mesh.castShadow = mesh.receiveShadow = true;
+    scene.add(mesh);
+    colBoxes.push({ x: od.x, z: od.z, hw: od.w / 2, hd: od.d / 2, h: od.h });
+    if (Math.random() > 0.5) {
+      const top = new THREE.Mesh(new THREE.BoxGeometry(od.w * 0.9, 0.5, od.d * 0.9), m(od.c));
+      top.position.set(od.x, od.h + 0.25, od.z);
+      scene.add(top);
+    }
+  });
+
+  // Scattered flowers
+  for (let i = 0; i < 50; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = 3 + Math.random() * (ARENA_R - 5);
+    const colors = [0xFF6688, 0xFFCC00, 0xFF9944, 0xFFFFAA, 0xFF88CC];
+    const flower = new THREE.Mesh(
+      new THREE.SphereGeometry(0.12, 5, 4),
+      new THREE.MeshLambertMaterial({ color: colors[Math.floor(Math.random() * colors.length)] })
+    );
+    flower.position.set(Math.cos(a) * r, 0.12, Math.sin(a) * r);
+    scene.add(flower);
+  }
+}
+
+function buildTree(x, z) {
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.20, 0.30, 2.4, 7),
+    new THREE.MeshLambertMaterial({ color: 0x6B3A1E })
+  );
+  trunk.position.y = 1.2;
+  trunk.castShadow = true;
+  g.add(trunk);
+  [[3.4, 1.8], [4.7, 1.3], [5.9, 0.85]].forEach(([yp, r], i) => {
+    const cone = new THREE.Mesh(
+      new THREE.ConeGeometry(r, 1.9, 8),
+      new THREE.MeshLambertMaterial({ color: [0x2D7A22, 0x3A9E2A, 0x1E6A18][i] })
+    );
+    cone.position.y = yp;
+    cone.castShadow = true;
+    g.add(cone);
+  });
+  g.position.set(x, 0, z);
+  return g;
+}
+
+// ═══════════════════════════════════════
+// LIGHTS
+// ═══════════════════════════════════════
+function setupLights() {
+  scene.add(new THREE.AmbientLight(0xFFEEDD, 0.65));
+  const sun = new THREE.DirectionalLight(0xFFF5CC, 1.15);
+  sun.position.set(50, 90, 40);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  const sc = sun.shadow.camera;
+  sc.near = 1; sc.far = 220;
+  sc.left = sc.bottom = -90; sc.right = sc.top = 90;
+  scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xAADDFF, 0.28);
+  fill.position.set(-30, 20, -30);
+  scene.add(fill);
+}
+
+// ═══════════════════════════════════════
+// ENEMIES
+// ═══════════════════════════════════════
+function spawnEnemies() {
+  for (let i = 0; i < N_ENEMIES; i++) {
+    const angle = (i / N_ENEMIES) * Math.PI * 2 + Math.random() * 0.4;
+    const dist  = 22 + Math.random() * 22;
+    const x = Math.cos(angle) * dist;
+    const z = Math.sin(angle) * dist;
+    const mesh = makeDuck(false);
+    mesh.position.set(x, 0, z);
+    scene.add(mesh);
+    enemies.push({
+      mesh,
+      pos: new THREE.Vector3(x, 0, z),
+      hp: 60,
+      speed: 2.4 + Math.random() * 1.2,
+      shootTimer: 1 + Math.random() * 2,
+      shootCd: 1.8 + Math.random() * 1.4,
+      dead: false,
+      deathT: 0,
+      wt: Math.random() * 100,
+    });
+  }
+}
+
+// ═══════════════════════════════════════
+// COLLISION
+// ═══════════════════════════════════════
+function isSolid(x, z, r) {
+  // Arena wall
+  if (Math.sqrt(x * x + z * z) > ARENA_R - 1.2) return true;
+  for (const b of colBoxes) {
+    if (Math.abs(x - b.x) < b.hw + r && Math.abs(z - b.z) < b.hd + r) return true;
+  }
+  for (const c of colCircles) {
+    const dx = x - c.x, dz = z - c.z;
+    if (dx * dx + dz * dz < (c.r + r) * (c.r + r)) return true;
+  }
+  return false;
+}
+
+function tryMove(pos, dx, dz, r) {
+  const nx = pos.x + dx, nz = pos.z + dz;
+  if (!isSolid(nx, nz, r)) {
+    pos.x = nx; pos.z = nz;
+  } else if (!isSolid(nx, pos.z, r)) {
+    pos.x = nx;
+  } else if (!isSolid(pos.x, nz, r)) {
+    pos.z = nz;
+  }
+}
+
+// ═══════════════════════════════════════
+// SHOOT
+// ═══════════════════════════════════════
+function playerShoot() {
+  if (!gameActive || ammo <= 0) return;
+  const now = performance.now();
+  if (now - lastShot < SHOOT_CD) return;
+  lastShot = now;
+  ammo--;
+
+  // Direction: where the camera is pointing (forward = -Z in camera space, rotated by yaw/pitch)
+  const dir = new THREE.Vector3(
+    -Math.sin(camYaw) * Math.cos(camPitch),
+     Math.sin(camPitch),
+    -Math.cos(camYaw) * Math.cos(camPitch)
+  ).normalize();
+
+  const b = makeBread();
+  // Spawn at player chest, slightly ahead
+  b.position.set(
+    pPos.x + dir.x * 0.8,
+    pPos.y + 0.85,
+    pPos.z + dir.z * 0.8
+  );
+  b.userData = { vel: dir.clone().multiplyScalar(32), life: 2.8, fromPlayer: true };
+  scene.add(b);
+  bullets.push(b);
+  updateHUD();
+}
+
+function enemyShoot(en) {
+  const dir = new THREE.Vector3()
+    .subVectors(new THREE.Vector3(pPos.x, pPos.y + 0.6, pPos.z),
+                new THREE.Vector3(en.pos.x, en.pos.y + 0.6, en.pos.z))
+    .normalize();
+  const b = makeBread();
+  b.position.set(en.pos.x + dir.x * 0.6, en.pos.y + 0.8, en.pos.z + dir.z * 0.6);
+  b.userData = { vel: dir.clone().multiplyScalar(13), life: 3.2, fromPlayer: false };
+  scene.add(b);
+  bullets.push(b);
+}
+
+// ═══════════════════════════════════════
+// HUD
+// ═══════════════════════════════════════
+function updateHUD() {
+  const pct = Math.max(0, pHP / MAX_HP * 100);
+  document.getElementById('health-fill').style.width = pct + '%';
+  document.getElementById('health-num').textContent = Math.max(0, Math.ceil(pHP)) + ' / ' + MAX_HP;
+  document.getElementById('ammo-val').textContent = ammo;
+  document.getElementById('enemy-val').textContent = enemies.filter(e => !e.dead).length;
+}
+
+function flashRed() {
+  const el = document.getElementById('dmg-flash');
+  el.style.background = 'rgba(255,0,0,0.38)';
+  setTimeout(() => el.style.background = 'rgba(255,0,0,0)', 160);
+}
+function showHit() {
+  const hm = document.getElementById('hit-marker');
+  hm.style.opacity = '1';
+  setTimeout(() => hm.style.opacity = '0', 130);
+}
+function showKill() {
+  document.getElementById('kill-feed').textContent = '💀 DUCK DOWN!';
+  killFeedTimer = 2;
+}
+
+// ═══════════════════════════════════════
+// UPDATE
+// ═══════════════════════════════════════
+function update(dt) {
+  if (!gameActive) return;
+  elapsedTime += dt;
+
+  // ── Input / movement
+  const sprinting = (keys['Shift'] || keys['ShiftLeft'] || keys['ShiftRight'])
+    && (keys['w'] || keys['W'] || keys['z'] || keys['Z'] || keys['s'] || keys['S'] || keys['a'] || keys['A'] || keys['d'] || keys['D']);
+  const speed = sprinting ? 9.5 : 5.6;
+
+  // Camera-relative directions
+  const fwX = -Math.sin(camYaw), fwZ = -Math.cos(camYaw);
+  const rtX =  Math.cos(camYaw), rtZ = -Math.sin(camYaw);
+
+  let mx = 0, mz = 0;
+  if (keys['w'] || keys['W'] || keys['z'] || keys['Z']) { mx += fwX; mz += fwZ; }
+  if (keys['s'] || keys['S'])                            { mx -= fwX; mz -= fwZ; }
+  if (keys['a'] || keys['A'])                            { mx -= rtX; mz -= rtZ; }
+  if (keys['d'] || keys['D'])                            { mx += rtX; mz += rtZ; }
+
+  const mLen = Math.sqrt(mx * mx + mz * mz);
+  if (mLen > 0) {
+    const norm = 1 / mLen;
+    tryMove(pPos, mx * norm * speed * dt, mz * norm * speed * dt, 0.5);
+  }
+
+  // Jump & gravity
+  if ((keys[' '] || keys['Space']) && onGround) {
+    pVelY = 8.2; onGround = false;
+  }
+  pVelY -= 24 * dt;
+  pPos.y += pVelY * dt;
+  if (pPos.y <= 0) { pPos.y = 0; pVelY = 0; onGround = true; }
+
+  // Sync mesh
+  player.position.copy(pPos);
+
+  // Duck body faces movement dir; otherwise faces camera direction
+  if (mLen > 0) {
+    player.rotation.y = Math.atan2(mx, mz);
   } else {
-    // ROOSE
-    const fl=Math.sin(b.af*0.14)*6+bob;
-    for(let i=0;i<14;i++){const fa=b.af*0.06+i*(Math.PI*2/14);const r=38+Math.sin(b.af*0.2+i)*10;c.fillStyle=`rgba(80,0,140,${0.25+rage*0.3})`;c.beginPath();c.arc(Math.cos(fa)*r,Math.sin(fa)*r-15+fl,9,0,Math.PI*2);c.fill();}
-    c.fillStyle='rgba(0,0,0,0.18)';c.beginPath();c.ellipse(0,8-fl*0.4,24,7,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#080014';c.beginPath();c.moveTo(-22,fl);c.lineTo(-28,58+fl);c.lineTo(28,58+fl);c.lineTo(22,fl);c.closePath();c.fill();
-    c.fillStyle='#0e001e';c.fillRect(-14,fl,28,42);
-    c.fillStyle=`rgba(140,0,255,${0.3+Math.sin(b.af*0.2)*0.3})`;c.beginPath();c.arc(0,32+fl,9,0,Math.PI*2);c.fill();
-    c.fillStyle='#080014';c.fillRect(-30,4+fl,12,30);c.fillRect(18,4+fl,12,30);
-    c.fillStyle='#c8a0d4';c.beginPath();c.ellipse(-24,38+fl,7,8,0,0,Math.PI*2);c.fill();c.beginPath();c.ellipse(24,38+fl,7,8,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#c8a0d4';c.fillRect(-6,-12+fl,12,12);c.fillStyle='#c8a0d4';c.beginPath();c.ellipse(0,-28+fl,13,18,0,0,Math.PI*2);c.fill();
-    c.fillStyle='#080014';c.beginPath();c.moveTo(-19,-36+fl);c.lineTo(0,-58+fl);c.lineTo(19,-36+fl);c.lineTo(16,-18+fl);c.lineTo(-16,-18+fl);c.closePath();c.fill();
-    const eyeCol=rage>0.5?'#ff44ff':'#aa44ff';
-    c.fillStyle=eyeCol;c.shadowColor=eyeCol;c.shadowBlur=10;c.fillRect(-8,-32+fl,6,5);c.fillRect(2,-32+fl,6,5);c.shadowBlur=0;
+    player.rotation.y = camYaw;
   }
-  c.restore();
+
+  // Neck/head pitch follows camera
+  player.userData.neck.rotation.x = -camPitch * 0.55;
+
+  // Wing flap
+  const flap = Math.sin(elapsedTime * 8.5) * 0.28 * (mLen > 0 ? 1 : 0.12);
+  player.userData.wL.rotation.z =  0.3 + flap;
+  player.userData.wR.rotation.z = -0.3 - flap;
+
+  // ── Camera
+  // Camera sits BEHIND the player:
+  //   positive camYaw = rotated right → camera goes to the right side and looks left
+  //   sin(camYaw) gives the X offset, cos(camYaw) gives the Z offset
+  //   To be BEHIND: camX = pPos.x + sin(yaw)*dist, camZ = pPos.z + cos(yaw)*dist
+  const camX = pPos.x + Math.sin(camYaw) * CAM_DIST;
+  const camZ = pPos.z + Math.cos(camYaw) * CAM_DIST;
+  const camY = pPos.y + CAM_HEIGHT + camPitch * 2.5;
+  camera.position.set(camX, camY, camZ);
+
+  // Look at a point ahead of the player (in the direction the camera faces = -camYaw)
+  const lookAtX = pPos.x - Math.sin(camYaw) * 5;
+  const lookAtY = pPos.y + 0.9 - camPitch * 4;
+  const lookAtZ = pPos.z - Math.cos(camYaw) * 5;
+  camera.lookAt(lookAtX, lookAtY, lookAtZ);
+
+  // ── Enemies
+  enemies.forEach(en => {
+    if (en.dead) {
+      en.deathT -= dt;
+      en.mesh.rotation.z = Math.min(en.mesh.rotation.z + dt * 3.5, Math.PI / 2);
+      en.mesh.position.y = Math.max(en.mesh.position.y - dt * 1.4, -1.5);
+      if (en.deathT <= 0) scene.remove(en.mesh);
+      return;
+    }
+
+    const dx = pPos.x - en.pos.x;
+    const dz = pPos.z - en.pos.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+
+    if (dist > 1.5 && dist < 90) {
+      const s = en.speed / dist;
+      tryMove(en.pos, dx * s * dt, dz * s * dt, 0.45);
+    }
+    en.pos.y = 0;
+    en.mesh.position.copy(en.pos);
+
+    // Face toward player
+    en.mesh.rotation.y = Math.atan2(dx, dz);
+
+    // Wing animation
+    en.wt += dt;
+    const ef = Math.sin(en.wt * 9) * 0.28;
+    en.mesh.userData.wL.rotation.z =  0.3 + ef;
+    en.mesh.userData.wR.rotation.z = -0.3 - ef;
+
+    // Neck pitch flat for enemies
+    en.mesh.userData.neck.rotation.x = 0;
+
+    // Shoot at player
+    en.shootTimer -= dt;
+    if (en.shootTimer <= 0 && dist < 25) {
+      en.shootTimer = en.shootCd;
+      enemyShoot(en);
+    }
+
+    // Melee damage
+    if (dist < 1.6) {
+      pHP -= 9 * dt;
+      flashRed();
+    }
+  });
+
+  // Prune dead enemies (after deathT expires)
+  enemies = enemies.filter(e => !e.dead || e.deathT > 0);
+
+  // ── Bullets
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+    const v = b.userData.vel;
+    b.position.x += v.x * dt;
+    b.position.y += v.y * dt;
+    b.position.z += v.z * dt;
+    v.y -= 8 * dt;       // bread gravity arc
+    b.rotation.y += dt * 10;
+    b.userData.life -= dt;
+
+    if (b.position.y < -1 || b.userData.life <= 0) {
+      scene.remove(b); bullets.splice(i, 1); continue;
+    }
+
+    let hit = false;
+
+    if (b.userData.fromPlayer) {
+      for (const en of enemies) {
+        if (en.dead) continue;
+        const ex = b.position.x - en.pos.x;
+        const ey = b.position.y - (en.pos.y + 0.6);
+        const ez = b.position.z - en.pos.z;
+        if (ex*ex + ey*ey + ez*ez < 0.85 * 0.85) {
+          en.hp -= 30;
+          showHit();
+          if (en.hp <= 0) { en.dead = true; en.deathT = 1.4; showKill(); }
+          hit = true; break;
+        }
+      }
+    } else {
+      const ex = b.position.x - pPos.x;
+      const ey = b.position.y - (pPos.y + 0.6);
+      const ez = b.position.z - pPos.z;
+      if (ex*ex + ey*ey + ez*ez < 1.0 * 1.0) {
+        pHP -= 12; flashRed(); hit = true;
+      }
+    }
+
+    // Hit obstacle
+    if (!hit) {
+      for (const ob of colBoxes) {
+        if (Math.abs(b.position.x - ob.x) < ob.hw + 0.1 &&
+            Math.abs(b.position.z - ob.z) < ob.hd + 0.1 &&
+            b.position.y < ob.h + 0.1) {
+          hit = true; break;
+        }
+      }
+    }
+
+    if (hit) { scene.remove(b); bullets.splice(i, 1); }
+  }
+
+  // Kill-feed timer
+  if (killFeedTimer > 0) {
+    killFeedTimer -= dt;
+    if (killFeedTimer <= 0) document.getElementById('kill-feed').textContent = '';
+  }
+
+  updateHUD();
+
+  // Win / Lose
+  const alive = enemies.filter(e => !e.dead).length;
+  if (alive === 0 && gameActive) {
+    gameActive = false;
+    setTimeout(() => {
+      document.getElementById('screen-win').style.display = 'flex';
+      document.exitPointerLock && document.exitPointerLock();
+    }, 900);
+  }
+  if (pHP <= 0 && gameActive) {
+    gameActive = false;
+    document.getElementById('screen-lose').style.display = 'flex';
+    document.exitPointerLock && document.exitPointerLock();
+  }
 }
 
-// ══════════════════════════════════════════════════════
-//  RESULT & NAV
-// ══════════════════════════════════════════════════════
-function showResult(win){
-  showScreen('result-screen');
-  if(win){$('result-title').textContent='VICTORY';$('result-title').style.color='#f5c842';$('result-title').style.textShadow='0 0 40px rgba(245,200,66,0.6)';$('result-sub').textContent='THE MUSIC LIVES ON';$('result-btn1').style.color='#f5c842';$('result-btn1').style.borderColor='#f5c842';$('result-btn2').style.color='#666';$('result-btn2').style.borderColor='#333';}
-  else{$('result-title').textContent='DEFEATED';$('result-title').style.color='#e63312';$('result-title').style.textShadow='0 0 40px rgba(230,51,18,0.6)';$('result-sub').textContent='THE RIFF FALLS SILENT';$('result-btn1').style.color='#e63312';$('result-btn1').style.borderColor='#e63312';$('result-btn2').style.color='#aaa';$('result-btn2').style.borderColor='#555';}
-  $('result-score').textContent=`SCORE: ${score}`;
-}
-function goMenu(){showingMenu=true;questProgress=0;score=0;gameActive=false;showScreen('menu');requestAnimationFrame(drawMenuLeon);}
-function showControls(){alert('CONTROLS\n\nWASD / Arrow Keys — Move & Jump\nZ or J — Attack\nX — Guitar Blast (Special)\nSpace / Enter — Skip dialog\nClick — Skip dialog\n\nFight through 7 quests!');}
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+function init() {
+  const canvas = document.getElementById('c');
 
-requestAnimationFrame(gameLoop);
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0xA8D8F0, 65, 170);
+
+  camera = new THREE.PerspectiveCamera(68, innerWidth / innerHeight, 0.1, 300);
+
+  clock = new THREE.Clock(false); // not auto-start; we start it in startGame
+
+  setupLights();
+  buildMap();
+
+  player = makeDuck(true);
+  player.position.copy(pPos);
+  scene.add(player);
+
+  spawnEnemies();
+  updateHUD();
+
+  // Initial camera position so we see something before game starts
+  camera.position.set(0, 10, 18);
+  camera.lookAt(0, 0, 0);
+}
+
+function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  update(dt);
+  renderer.render(scene, camera);
+}
+
+// ═══════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  keys[e.code] = true;
+  if (e.code === 'Space') e.preventDefault();
+});
+window.addEventListener('keyup', e => {
+  keys[e.key] = false;
+  keys[e.code] = false;
+});
+
+window.addEventListener('mousemove', e => {
+  if (!pointerLocked) return;
+  camYaw   -= e.movementX * 0.0024;
+  camPitch -= e.movementY * 0.0024;
+  camPitch  = Math.max(-0.46, Math.min(0.70, camPitch));
+});
+
+window.addEventListener('mousedown', e => {
+  if (e.button !== 0) return;
+  if (!pointerLocked) {
+    document.getElementById('c').requestPointerLock();
+  } else {
+    playerShoot();
+  }
+});
+
+document.addEventListener('pointerlockchange', () => {
+  pointerLocked = document.pointerLockElement === document.getElementById('c');
+  document.getElementById('lock-msg').style.display = (gameActive && !pointerLocked) ? 'block' : 'none';
+});
+
+window.addEventListener('resize', () => {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// ═══════════════════════════════════════
+// START
+// ═══════════════════════════════════════
+function startGame() {
+  document.getElementById('screen-start').style.display = 'none';
+  gameActive = true;
+  clock.start();
+  document.getElementById('c').requestPointerLock();
+}
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+init();
+loop();
 </script>
 </body>
 </html>
