@@ -1,865 +1,435 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>🦆 EENDNITE</title>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:#000; overflow:hidden; font-family:'Arial Black',Arial,sans-serif; }
-canvas { display:block; }
-
-#hud { position:fixed; inset:0; pointer-events:none; z-index:10; }
-
-#crosshair {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:20px; height:20px;
-}
-#crosshair::before,#crosshair::after {
-  content:''; position:absolute; background:rgba(255,255,255,0.9); border-radius:1px;
-}
-#crosshair::before { width:2px; height:20px; left:9px; top:0; }
-#crosshair::after  { width:20px; height:2px; top:9px; left:0; }
-
-#health-ui { position:absolute; bottom:28px; left:28px; }
-#health-label { color:#fff; font-size:12px; letter-spacing:2px; margin-bottom:4px; text-shadow:1px 1px 3px #000; }
-#health-track {
-  width:240px; height:20px; background:rgba(0,0,0,0.55);
-  border:2px solid rgba(255,255,255,0.7); border-radius:3px; overflow:hidden; position:relative;
-}
-#health-fill { height:100%; width:100%; background:linear-gradient(90deg,#e83030,#ff8800); transition:width 0.15s; border-radius:1px; }
-#health-num {
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:11px; font-weight:bold; text-shadow:1px 1px 2px #000;
-}
-
-#ammo-ui { position:absolute; bottom:28px; right:28px; text-align:right; }
-#ammo-label { color:#fff; font-size:12px; letter-spacing:2px; text-shadow:1px 1px 3px #000; }
-#ammo-val { font-size:44px; font-weight:900; color:#ffe033; text-shadow:2px 2px 0 #000,0 0 20px #ff8800; line-height:1; }
-
-#enemy-ui { position:absolute; top:18px; right:24px; text-align:right; }
-#enemy-label { color:#fff; font-size:12px; letter-spacing:2px; text-shadow:1px 1px 3px #000; }
-#enemy-val { font-size:40px; font-weight:900; color:#ff5555; text-shadow:2px 2px 0 #000; line-height:1; }
-
-#game-title {
-  position:absolute; top:14px; left:50%; transform:translateX(-50%);
-  font-size:26px; font-weight:900; color:#ffe033; letter-spacing:4px;
-  text-shadow:0 0 16px #ff9900, 2px 2px 0 #000;
-}
-
-#dmg-flash { position:absolute; inset:0; background:rgba(255,0,0,0); pointer-events:none; transition:background 0.08s; }
-#hit-marker {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  color:#ff4400; font-size:22px; font-weight:900; opacity:0; transition:opacity 0.1s;
-  text-shadow:1px 1px 3px #000; pointer-events:none;
-}
-#kill-feed {
-  position:absolute; top:80px; right:24px; text-align:right;
-  color:#ffe033; font-size:13px; font-weight:bold; text-shadow:1px 1px 3px #000; line-height:1.8;
-}
-#hint { position:absolute; bottom:80px; left:28px; color:rgba(255,255,255,0.45); font-size:10px; line-height:2; letter-spacing:1px; }
-#lock-msg {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  color:rgba(255,255,255,0.8); font-size:18px; font-weight:bold;
-  text-shadow:1px 1px 4px #000; text-align:center; pointer-events:none;
-  background:rgba(0,0,0,0.5); padding:12px 24px; border-radius:8px;
-}
-
-.screen {
-  position:fixed; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; z-index:50;
-  background:rgba(0,0,0,0.85);
-}
-.screen h1 { font-size:68px; letter-spacing:5px; margin-bottom:8px; }
-.screen p  { font-size:16px; color:#ccc; margin-bottom:6px; }
-.keys { font-size:13px; color:#aaa; margin-bottom:28px; line-height:2.2; text-align:center; }
-.btn {
-  padding:15px 50px; font-size:20px; font-weight:900; letter-spacing:3px;
-  border:none; border-radius:8px; cursor:pointer; pointer-events:all;
-  transition:transform 0.1s, box-shadow 0.1s;
-}
-.btn:hover { transform:scale(1.06); }
-#screen-start h1 { color:#ffe033; text-shadow:0 0 40px #ff9900,3px 3px 0 #000; }
-#screen-start .btn { background:linear-gradient(135deg,#ffe033,#ff9900); color:#000; box-shadow:0 4px 20px rgba(255,153,0,0.5); }
-#screen-win  { display:none; }
-#screen-win  h1 { color:#ffe033; text-shadow:0 0 50px #ffe033; }
-#screen-win  .btn { background:#ffe033; color:#000; }
-#screen-lose { display:none; }
-#screen-lose h1 { color:#ff4444; text-shadow:0 0 50px #ff4444; }
-#screen-lose .btn { background:#ff4444; color:#fff; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belgian Websites — Professionele Websites voor Lokale Bedrijven</title>
+    <meta name="description" content="Belgian Websites bouwt moderne, professionele websites voor lokale bedrijven in België. Betaalbaar, snel & op maat gemaakt.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<canvas id="c"></canvas>
-
-<div id="hud">
-  <div id="game-title">🦆 EENDNITE</div>
-  <div id="crosshair"></div>
-  <div id="dmg-flash"></div>
-  <div id="hit-marker">✦</div>
-  <div id="health-ui">
-    <div id="health-label">❤ HEALTH</div>
-    <div id="health-track">
-      <div id="health-fill"></div>
-      <div id="health-num">100 / 100</div>
-    </div>
-  </div>
-  <div id="ammo-ui">
-    <div id="ammo-label">🍞 BREAD</div>
-    <div id="ammo-val">30</div>
-  </div>
-  <div id="enemy-ui">
-    <div id="enemy-label">🦆 ENEMIES</div>
-    <div id="enemy-val">10</div>
-  </div>
-  <div id="kill-feed"></div>
-  <div id="hint">W/A/S/D · move &nbsp; SPACE · jump &nbsp; SHIFT · sprint<br>MOUSE · look &nbsp; LEFT CLICK · shoot 🍞</div>
-  <div id="lock-msg" style="display:none">Click to lock mouse &amp; play</div>
-</div>
-
-<div class="screen" id="screen-start">
-  <h1>🦆 EENDNITE</h1>
-  <p style="font-size:20px;color:#ffe033;margin-bottom:14px;">Battle Royale — Duck Edition</p>
-  <div class="keys">
-    W / A / S / D &nbsp;—&nbsp; Move &nbsp;&nbsp;|&nbsp;&nbsp; MOUSE &nbsp;—&nbsp; Look around<br>
-    LEFT CLICK &nbsp;—&nbsp; Shoot 🍞 Bread &nbsp;&nbsp;|&nbsp;&nbsp; SPACE &nbsp;—&nbsp; Jump &nbsp;&nbsp;|&nbsp;&nbsp; SHIFT &nbsp;—&nbsp; Sprint<br>
-    <span style="color:#ffe033">Defeat all 10 enemy ducks to win!</span>
-  </div>
-  <button class="btn" id="start-btn">▶ PLAY NOW</button>
-</div>
-
-<div class="screen" id="screen-win">
-  <h1>🏆 VICTORY!</h1>
-  <p style="font-size:22px;color:#ffe033;margin-bottom:20px;">All enemy ducks defeated! QUACK!</p>
-  <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
-</div>
-
-<div class="screen" id="screen-lose">
-  <h1>💀 QUACKED</h1>
-  <p style="font-size:20px;color:#ff8888;margin-bottom:20px;">The ducks got you...</p>
-  <button class="btn" onclick="location.reload()">TRY AGAIN</button>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-'use strict';
-
-// ═══════════════════════════════════════
-// GLOBALS
-// ═══════════════════════════════════════
-let renderer, scene, camera, clock;
-
-// Player state
-let player;
-let pPos    = new THREE.Vector3(0, 0, 0);  // logical position
-let pVelY   = 0;
-let onGround = true;
-let pHP     = 100;
-const MAX_HP = 100;
-let ammo    = 30;
-const MAX_AMMO = 30;
-
-// Camera
-let camYaw   = 0;     // left-right angle
-let camPitch = 0.22;  // up-down angle (positive = look down slightly)
-const CAM_DIST   = 8.5;
-const CAM_HEIGHT = 3.2;
-
-// Input
-const keys = {};
-let pointerLocked = false;
-
-// World objects
-let enemies   = [];
-let bullets   = [];
-let colBoxes  = [];  // {x,z,hw,hd} half-widths
-let colCircles= [];  // {x,z,r}
-
-// Game state
-let gameActive = false;
-let lastShot   = 0;
-const SHOOT_CD = 280;
-const ARENA_R  = 52;
-const N_ENEMIES = 10;
-
-let killFeedTimer = 0;
-let elapsedTime   = 0; // manual elapsed for animations
-
-// ═══════════════════════════════════════
-// DUCK FACTORY
-// ═══════════════════════════════════════
-function makeDuck(isPlayer) {
-  const root = new THREE.Group();
-
-  const mainColor = isPlayer ? 0xFFD700 : 0xFF4422;
-  const wingColor = isPlayer ? 0xFFC200 : 0xCC2200;
-  const mat  = c => new THREE.MeshLambertMaterial({ color: c });
-
-  // Body
-  const body = new THREE.Mesh(
-    (() => { const g = new THREE.SphereGeometry(0.44, 10, 8); g.scale(1, 0.78, 1.12); return g; })(),
-    mat(mainColor)
-  );
-  body.position.y = 0.36;
-  body.castShadow = true;
-  root.add(body);
-
-  // Neck pivot (head/beak/eyes follow camera pitch for player)
-  const neckPivot = new THREE.Group();
-  neckPivot.position.set(0, 0.58, 0.18);
-  root.add(neckPivot);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 10, 8), mat(mainColor));
-  head.position.set(0, 0.27, 0.14);
-  head.castShadow = true;
-  neckPivot.add(head);
-
-  // Beak
-  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.22, 6), mat(0xFF9900));
-  beak.rotation.x = Math.PI / 2;
-  beak.position.set(0, 0.25, 0.40);
-  neckPivot.add(beak);
-
-  // Eyes
-  [-0.10, 0.10].forEach(ox => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6), mat(0x111111));
-    eye.position.set(ox, 0.31, 0.37);
-    neckPivot.add(eye);
-  });
-
-  // Wings
-  const wGeo = (() => { const g = new THREE.SphereGeometry(0.20, 8, 6); return g; })();
-  const wL = new THREE.Mesh(wGeo, mat(wingColor));
-  wL.scale.set(0.38, 0.68, 1.0);
-  wL.position.set(-0.47, 0.37, 0.04);
-  root.add(wL);
-
-  const wR = new THREE.Mesh(wGeo.clone(), mat(wingColor));
-  wR.scale.set(0.38, 0.68, 1.0);
-  wR.position.set(0.47, 0.37, 0.04);
-  root.add(wR);
-
-  // Tail
-  const tail = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 5), mat(wingColor));
-  tail.scale.set(0.7, 0.7, 0.5);
-  tail.position.set(0, 0.41, -0.42);
-  root.add(tail);
-
-  // Feet
-  const fGeo = new THREE.BoxGeometry(0.16, 0.055, 0.26);
-  [-0.15, 0.15].forEach(ox => {
-    const foot = new THREE.Mesh(fGeo, mat(0xFF9900));
-    foot.position.set(ox, 0.03, 0.08);
-    root.add(foot);
-  });
-
-  // Player hat
-  if (isPlayer) {
-    const hatMat = mat(0x1133BB);
-    const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.055, 12), hatMat);
-    brim.position.set(0, 0.31, 0.14);
-    neckPivot.add(brim);
-    const top = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.30, 12), hatMat);
-    top.position.set(0, 0.49, 0.14);
-    neckPivot.add(top);
-    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.202, 0.202, 0.058, 12), mat(0xFFCC00));
-    band.position.set(0, 0.32, 0.14);
-    neckPivot.add(band);
-  }
-
-  root.userData.wL = wL;
-  root.userData.wR = wR;
-  root.userData.neck = neckPivot;
-  return root;
-}
-
-// ═══════════════════════════════════════
-// BREAD PROJECTILE
-// ═══════════════════════════════════════
-function makeBread() {
-  const g = new THREE.Group();
-  const m = c => new THREE.MeshLambertMaterial({ color: c });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.14, 0.26), m(0xD4A040));
-  g.add(body);
-  const crust = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.09, 0.28), m(0x8B4513));
-  crust.position.y = -0.055;
-  g.add(crust);
-  for (let i = 0; i < 4; i++) {
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 4, 4), m(0xFFF8DC));
-    dot.position.set((Math.random() - 0.5) * 0.12, 0.07, (Math.random() - 0.5) * 0.16);
-    g.add(dot);
-  }
-  return g;
-}
-
-// ═══════════════════════════════════════
-// MAP
-// ═══════════════════════════════════════
-function buildMap() {
-  const m = c => new THREE.MeshLambertMaterial({ color: c });
-
-  // Sky
-  const sky = new THREE.Mesh(
-    new THREE.SphereGeometry(220, 20, 20),
-    new THREE.MeshBasicMaterial({ color: 0x6AAEE8, side: THREE.BackSide })
-  );
-  scene.add(sky);
-
-  // Clouds
-  for (let i = 0; i < 12; i++) {
-    const cg = new THREE.Group();
-    const a = (i / 12) * Math.PI * 2;
-    cg.position.set(Math.cos(a) * (70 + Math.random() * 30), 38 + Math.random() * 18, Math.sin(a) * (70 + Math.random() * 30));
-    for (let j = 0; j < 4; j++) {
-      const c = new THREE.Mesh(
-        new THREE.SphereGeometry(3 + Math.random() * 3, 8, 6),
-        new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
-      );
-      c.position.set((Math.random() - 0.5) * 7, Math.random() * 2, (Math.random() - 0.5) * 4);
-      cg.add(c);
-    }
-    scene.add(cg);
-  }
-
-  // Ground
-  const ground = new THREE.Mesh(
-    new THREE.CylinderGeometry(ARENA_R, ARENA_R * 1.04, 1.0, 60),
-    m(0x5BAD3E)
-  );
-  ground.position.y = -0.5;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  // Dirt edge
-  scene.add(Object.assign(
-    new THREE.Mesh(new THREE.CylinderGeometry(ARENA_R * 1.04, ARENA_R * 1.10, 0.7, 60), m(0xA0783C)),
-    { position: new THREE.Vector3(0, -0.7, 0) }
-  ));
-
-  // Ocean
-  const ocean = new THREE.Mesh(new THREE.CircleGeometry(300, 48), m(0x1A75C4));
-  ocean.rotation.x = -Math.PI / 2;
-  ocean.position.y = -1.6;
-  scene.add(ocean);
-
-  // Pond
-  const pond = new THREE.Mesh(new THREE.CircleGeometry(7, 32), new THREE.MeshLambertMaterial({ color: 0x2288CC, side: THREE.DoubleSide }));
-  pond.rotation.x = -Math.PI / 2;
-  pond.position.set(16, 0.02, -8);
-  scene.add(pond);
-
-  // Dirt path (Z axis)
-  const path = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 80), new THREE.MeshLambertMaterial({ color: 0xC8A060, side: THREE.DoubleSide }));
-  path.rotation.x = -Math.PI / 2;
-  path.position.y = 0.01;
-  scene.add(path);
-
-  // Trees
-  const treePos = [
-    [-20,-20],[-26,8],[-14,26],[12,-30],[30,-14],
-    [26,24],[-30,-4],[14,36],[-10,-38],[36,4],
-    [-38,18],[24,-36],[-26,30],[4,42],[-40,-22],
-    [40,-30],[-8,44],[32,32]
-  ];
-  treePos.forEach(([x, z]) => {
-    scene.add(buildTree(x, z));
-    colCircles.push({ x, z, r: 1.1 });
-  });
-
-  // Crates & rocks
-  const obsData = [
-    { x:-8,  z:12,  w:2.4, h:1.8, d:2.4, c:0x8B6410 },
-    { x:10,  z:8,   w:2,   h:1.4, d:2,   c:0x8B6410 },
-    { x:-12, z:-8,  w:3,   h:1.2, d:1.5, c:0x888888 },
-    { x:14,  z:-14, w:1.8, h:2.2, d:1.8, c:0x666666 },
-    { x:5,   z:22,  w:2.2, h:1.6, d:2.2, c:0x8B6410 },
-    { x:-20, z:15,  w:1.5, h:1.0, d:2.5, c:0x777777 },
-    { x:22,  z:0,   w:2,   h:1.8, d:2,   c:0x8B6410 },
-    { x:-5,  z:-20, w:2.4, h:1.4, d:1.6, c:0x888888 },
-    { x:0,   z:16,  w:1.6, h:2.0, d:1.6, c:0x8B6410 },
-    { x:-30, z:-18, w:3,   h:1.5, d:3,   c:0x777777 },
-    { x:28,  z:14,  w:2,   h:1.2, d:2,   c:0x8B6410 },
-    { x:-16, z:30,  w:2.5, h:1.6, d:1.8, c:0x666666 },
-  ];
-  obsData.forEach(od => {
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(od.w, od.h, od.d), m(od.c));
-    mesh.position.set(od.x, od.h / 2, od.z);
-    mesh.castShadow = mesh.receiveShadow = true;
-    scene.add(mesh);
-    colBoxes.push({ x: od.x, z: od.z, hw: od.w / 2, hd: od.d / 2, h: od.h });
-    if (Math.random() > 0.5) {
-      const top = new THREE.Mesh(new THREE.BoxGeometry(od.w * 0.9, 0.5, od.d * 0.9), m(od.c));
-      top.position.set(od.x, od.h + 0.25, od.z);
-      scene.add(top);
-    }
-  });
-
-  // Scattered flowers
-  for (let i = 0; i < 50; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const r = 3 + Math.random() * (ARENA_R - 5);
-    const colors = [0xFF6688, 0xFFCC00, 0xFF9944, 0xFFFFAA, 0xFF88CC];
-    const flower = new THREE.Mesh(
-      new THREE.SphereGeometry(0.12, 5, 4),
-      new THREE.MeshLambertMaterial({ color: colors[Math.floor(Math.random() * colors.length)] })
-    );
-    flower.position.set(Math.cos(a) * r, 0.12, Math.sin(a) * r);
-    scene.add(flower);
-  }
-}
-
-function buildTree(x, z) {
-  const g = new THREE.Group();
-  const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.20, 0.30, 2.4, 7),
-    new THREE.MeshLambertMaterial({ color: 0x6B3A1E })
-  );
-  trunk.position.y = 1.2;
-  trunk.castShadow = true;
-  g.add(trunk);
-  [[3.4, 1.8], [4.7, 1.3], [5.9, 0.85]].forEach(([yp, r], i) => {
-    const cone = new THREE.Mesh(
-      new THREE.ConeGeometry(r, 1.9, 8),
-      new THREE.MeshLambertMaterial({ color: [0x2D7A22, 0x3A9E2A, 0x1E6A18][i] })
-    );
-    cone.position.y = yp;
-    cone.castShadow = true;
-    g.add(cone);
-  });
-  g.position.set(x, 0, z);
-  return g;
-}
-
-// ═══════════════════════════════════════
-// LIGHTS
-// ═══════════════════════════════════════
-function setupLights() {
-  scene.add(new THREE.AmbientLight(0xFFEEDD, 0.65));
-  const sun = new THREE.DirectionalLight(0xFFF5CC, 1.15);
-  sun.position.set(50, 90, 40);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
-  const sc = sun.shadow.camera;
-  sc.near = 1; sc.far = 220;
-  sc.left = sc.bottom = -90; sc.right = sc.top = 90;
-  scene.add(sun);
-  const fill = new THREE.DirectionalLight(0xAADDFF, 0.28);
-  fill.position.set(-30, 20, -30);
-  scene.add(fill);
-}
-
-// ═══════════════════════════════════════
-// ENEMIES
-// ═══════════════════════════════════════
-function spawnEnemies() {
-  for (let i = 0; i < N_ENEMIES; i++) {
-    const angle = (i / N_ENEMIES) * Math.PI * 2 + Math.random() * 0.4;
-    const dist  = 22 + Math.random() * 22;
-    const x = Math.cos(angle) * dist;
-    const z = Math.sin(angle) * dist;
-    const mesh = makeDuck(false);
-    mesh.position.set(x, 0, z);
-    scene.add(mesh);
-    enemies.push({
-      mesh,
-      pos: new THREE.Vector3(x, 0, z),
-      hp: 60,
-      speed: 2.4 + Math.random() * 1.2,
-      shootTimer: 1 + Math.random() * 2,
-      shootCd: 1.8 + Math.random() * 1.4,
-      dead: false,
-      deathT: 0,
-      wt: Math.random() * 100,
-    });
-  }
-}
-
-// ═══════════════════════════════════════
-// COLLISION
-// ═══════════════════════════════════════
-function isSolid(x, z, r) {
-  // Arena wall
-  if (Math.sqrt(x * x + z * z) > ARENA_R - 1.2) return true;
-  for (const b of colBoxes) {
-    if (Math.abs(x - b.x) < b.hw + r && Math.abs(z - b.z) < b.hd + r) return true;
-  }
-  for (const c of colCircles) {
-    const dx = x - c.x, dz = z - c.z;
-    if (dx * dx + dz * dz < (c.r + r) * (c.r + r)) return true;
-  }
-  return false;
-}
-
-function tryMove(pos, dx, dz, r) {
-  const nx = pos.x + dx, nz = pos.z + dz;
-  if (!isSolid(nx, nz, r)) {
-    pos.x = nx; pos.z = nz;
-  } else if (!isSolid(nx, pos.z, r)) {
-    pos.x = nx;
-  } else if (!isSolid(pos.x, nz, r)) {
-    pos.z = nz;
-  }
-}
-
-// ═══════════════════════════════════════
-// SHOOT
-// ═══════════════════════════════════════
-function playerShoot() {
-  if (!gameActive || ammo <= 0) return;
-  const now = performance.now();
-  if (now - lastShot < SHOOT_CD) return;
-  lastShot = now;
-  ammo--;
-
-  // Direction: where the camera is pointing (forward = -Z in camera space, rotated by yaw/pitch)
-  const dir = new THREE.Vector3(
-    -Math.sin(camYaw) * Math.cos(camPitch),
-     Math.sin(camPitch),
-    -Math.cos(camYaw) * Math.cos(camPitch)
-  ).normalize();
-
-  const b = makeBread();
-  // Spawn at player chest, slightly ahead
-  b.position.set(
-    pPos.x + dir.x * 0.8,
-    pPos.y + 0.85,
-    pPos.z + dir.z * 0.8
-  );
-  b.userData = { vel: dir.clone().multiplyScalar(32), life: 2.8, fromPlayer: true };
-  scene.add(b);
-  bullets.push(b);
-  updateHUD();
-}
-
-function enemyShoot(en) {
-  const dir = new THREE.Vector3()
-    .subVectors(new THREE.Vector3(pPos.x, pPos.y + 0.6, pPos.z),
-                new THREE.Vector3(en.pos.x, en.pos.y + 0.6, en.pos.z))
-    .normalize();
-  const b = makeBread();
-  b.position.set(en.pos.x + dir.x * 0.6, en.pos.y + 0.8, en.pos.z + dir.z * 0.6);
-  b.userData = { vel: dir.clone().multiplyScalar(13), life: 3.2, fromPlayer: false };
-  scene.add(b);
-  bullets.push(b);
-}
-
-// ═══════════════════════════════════════
-// HUD
-// ═══════════════════════════════════════
-function updateHUD() {
-  const pct = Math.max(0, pHP / MAX_HP * 100);
-  document.getElementById('health-fill').style.width = pct + '%';
-  document.getElementById('health-num').textContent = Math.max(0, Math.ceil(pHP)) + ' / ' + MAX_HP;
-  document.getElementById('ammo-val').textContent = ammo;
-  document.getElementById('enemy-val').textContent = enemies.filter(e => !e.dead).length;
-}
-
-function flashRed() {
-  const el = document.getElementById('dmg-flash');
-  el.style.background = 'rgba(255,0,0,0.38)';
-  setTimeout(() => el.style.background = 'rgba(255,0,0,0)', 160);
-}
-function showHit() {
-  const hm = document.getElementById('hit-marker');
-  hm.style.opacity = '1';
-  setTimeout(() => hm.style.opacity = '0', 130);
-}
-function showKill() {
-  document.getElementById('kill-feed').textContent = '💀 DUCK DOWN!';
-  killFeedTimer = 2;
-}
-
-// ═══════════════════════════════════════
-// UPDATE
-// ═══════════════════════════════════════
-function update(dt) {
-  if (!gameActive) return;
-  elapsedTime += dt;
-
-  // ── Input / movement
-  const sprinting = (keys['Shift'] || keys['ShiftLeft'] || keys['ShiftRight'])
-    && (keys['w'] || keys['W'] || keys['z'] || keys['Z'] || keys['s'] || keys['S'] || keys['a'] || keys['A'] || keys['d'] || keys['D']);
-  const speed = sprinting ? 9.5 : 5.6;
-
-  // Camera-relative directions
-  const fwX = -Math.sin(camYaw), fwZ = -Math.cos(camYaw);
-  const rtX =  Math.cos(camYaw), rtZ = -Math.sin(camYaw);
-
-  let mx = 0, mz = 0;
-  if (keys['w'] || keys['W'] || keys['z'] || keys['Z']) { mx += fwX; mz += fwZ; }
-  if (keys['s'] || keys['S'])                            { mx -= fwX; mz -= fwZ; }
-  if (keys['a'] || keys['A'])                            { mx -= rtX; mz -= rtZ; }
-  if (keys['d'] || keys['D'])                            { mx += rtX; mz += rtZ; }
-
-  const mLen = Math.sqrt(mx * mx + mz * mz);
-  if (mLen > 0) {
-    const norm = 1 / mLen;
-    tryMove(pPos, mx * norm * speed * dt, mz * norm * speed * dt, 0.5);
-  }
-
-  // Jump & gravity
-  if ((keys[' '] || keys['Space']) && onGround) {
-    pVelY = 8.2; onGround = false;
-  }
-  pVelY -= 24 * dt;
-  pPos.y += pVelY * dt;
-  if (pPos.y <= 0) { pPos.y = 0; pVelY = 0; onGround = true; }
-
-  // Sync mesh
-  player.position.copy(pPos);
-
-  // Duck body faces movement dir; otherwise faces camera direction
-  if (mLen > 0) {
-    player.rotation.y = Math.atan2(mx, mz);
-  } else {
-    player.rotation.y = camYaw;
-  }
-
-  // Neck/head pitch follows camera
-  player.userData.neck.rotation.x = -camPitch * 0.55;
-
-  // Wing flap
-  const flap = Math.sin(elapsedTime * 8.5) * 0.28 * (mLen > 0 ? 1 : 0.12);
-  player.userData.wL.rotation.z =  0.3 + flap;
-  player.userData.wR.rotation.z = -0.3 - flap;
-
-  // ── Camera
-  // Camera sits BEHIND the player:
-  //   positive camYaw = rotated right → camera goes to the right side and looks left
-  //   sin(camYaw) gives the X offset, cos(camYaw) gives the Z offset
-  //   To be BEHIND: camX = pPos.x + sin(yaw)*dist, camZ = pPos.z + cos(yaw)*dist
-  const camX = pPos.x + Math.sin(camYaw) * CAM_DIST;
-  const camZ = pPos.z + Math.cos(camYaw) * CAM_DIST;
-  const camY = pPos.y + CAM_HEIGHT + camPitch * 2.5;
-  camera.position.set(camX, camY, camZ);
-
-  // Look at a point ahead of the player (in the direction the camera faces = -camYaw)
-  const lookAtX = pPos.x - Math.sin(camYaw) * 5;
-  const lookAtY = pPos.y + 0.9 - camPitch * 4;
-  const lookAtZ = pPos.z - Math.cos(camYaw) * 5;
-  camera.lookAt(lookAtX, lookAtY, lookAtZ);
-
-  // ── Enemies
-  enemies.forEach(en => {
-    if (en.dead) {
-      en.deathT -= dt;
-      en.mesh.rotation.z = Math.min(en.mesh.rotation.z + dt * 3.5, Math.PI / 2);
-      en.mesh.position.y = Math.max(en.mesh.position.y - dt * 1.4, -1.5);
-      if (en.deathT <= 0) scene.remove(en.mesh);
-      return;
-    }
-
-    const dx = pPos.x - en.pos.x;
-    const dz = pPos.z - en.pos.z;
-    const dist = Math.sqrt(dx * dx + dz * dz);
-
-    if (dist > 1.5 && dist < 90) {
-      const s = en.speed / dist;
-      tryMove(en.pos, dx * s * dt, dz * s * dt, 0.45);
-    }
-    en.pos.y = 0;
-    en.mesh.position.copy(en.pos);
-
-    // Face toward player
-    en.mesh.rotation.y = Math.atan2(dx, dz);
-
-    // Wing animation
-    en.wt += dt;
-    const ef = Math.sin(en.wt * 9) * 0.28;
-    en.mesh.userData.wL.rotation.z =  0.3 + ef;
-    en.mesh.userData.wR.rotation.z = -0.3 - ef;
-
-    // Neck pitch flat for enemies
-    en.mesh.userData.neck.rotation.x = 0;
-
-    // Shoot at player
-    en.shootTimer -= dt;
-    if (en.shootTimer <= 0 && dist < 25) {
-      en.shootTimer = en.shootCd;
-      enemyShoot(en);
-    }
-
-    // Melee damage
-    if (dist < 1.6) {
-      pHP -= 9 * dt;
-      flashRed();
-    }
-  });
-
-  // Prune dead enemies (after deathT expires)
-  enemies = enemies.filter(e => !e.dead || e.deathT > 0);
-
-  // ── Bullets
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    const b = bullets[i];
-    const v = b.userData.vel;
-    b.position.x += v.x * dt;
-    b.position.y += v.y * dt;
-    b.position.z += v.z * dt;
-    v.y -= 8 * dt;       // bread gravity arc
-    b.rotation.y += dt * 10;
-    b.userData.life -= dt;
-
-    if (b.position.y < -1 || b.userData.life <= 0) {
-      scene.remove(b); bullets.splice(i, 1); continue;
-    }
-
-    let hit = false;
-
-    if (b.userData.fromPlayer) {
-      for (const en of enemies) {
-        if (en.dead) continue;
-        const ex = b.position.x - en.pos.x;
-        const ey = b.position.y - (en.pos.y + 0.6);
-        const ez = b.position.z - en.pos.z;
-        if (ex*ex + ey*ey + ez*ez < 0.85 * 0.85) {
-          en.hp -= 30;
-          showHit();
-          if (en.hp <= 0) { en.dead = true; en.deathT = 1.4; showKill(); }
-          hit = true; break;
-        }
-      }
-    } else {
-      const ex = b.position.x - pPos.x;
-      const ey = b.position.y - (pPos.y + 0.6);
-      const ez = b.position.z - pPos.z;
-      if (ex*ex + ey*ey + ez*ez < 1.0 * 1.0) {
-        pHP -= 12; flashRed(); hit = true;
-      }
-    }
-
-    // Hit obstacle
-    if (!hit) {
-      for (const ob of colBoxes) {
-        if (Math.abs(b.position.x - ob.x) < ob.hw + 0.1 &&
-            Math.abs(b.position.z - ob.z) < ob.hd + 0.1 &&
-            b.position.y < ob.h + 0.1) {
-          hit = true; break;
-        }
-      }
-    }
-
-    if (hit) { scene.remove(b); bullets.splice(i, 1); }
-  }
-
-  // Kill-feed timer
-  if (killFeedTimer > 0) {
-    killFeedTimer -= dt;
-    if (killFeedTimer <= 0) document.getElementById('kill-feed').textContent = '';
-  }
-
-  updateHUD();
-
-  // Win / Lose
-  const alive = enemies.filter(e => !e.dead).length;
-  if (alive === 0 && gameActive) {
-    gameActive = false;
-    setTimeout(() => {
-      document.getElementById('screen-win').style.display = 'flex';
-      document.exitPointerLock && document.exitPointerLock();
-    }, 900);
-  }
-  if (pHP <= 0 && gameActive) {
-    gameActive = false;
-    document.getElementById('screen-lose').style.display = 'flex';
-    document.exitPointerLock && document.exitPointerLock();
-  }
-}
-
-// ═══════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════
-function init() {
-  const canvas = document.getElementById('c');
-
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-  scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xA8D8F0, 65, 170);
-
-  camera = new THREE.PerspectiveCamera(68, innerWidth / innerHeight, 0.1, 300);
-
-  clock = new THREE.Clock(false); // not auto-start; we start it in startGame
-
-  setupLights();
-  buildMap();
-
-  player = makeDuck(true);
-  player.position.copy(pPos);
-  scene.add(player);
-
-  spawnEnemies();
-  updateHUD();
-
-  // Initial camera position so we see something before game starts
-  camera.position.set(0, 10, 18);
-  camera.lookAt(0, 0, 0);
-}
-
-function loop() {
-  requestAnimationFrame(loop);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  update(dt);
-  renderer.render(scene, camera);
-}
-
-// ═══════════════════════════════════════
-// INPUT
-// ═══════════════════════════════════════
-window.addEventListener('keydown', e => {
-  keys[e.key] = true;
-  keys[e.code] = true;
-  if (e.code === 'Space') e.preventDefault();
-});
-window.addEventListener('keyup', e => {
-  keys[e.key] = false;
-  keys[e.code] = false;
-});
-
-window.addEventListener('mousemove', e => {
-  if (!pointerLocked) return;
-  camYaw   -= e.movementX * 0.0024;
-  camPitch -= e.movementY * 0.0024;
-  camPitch  = Math.max(-0.46, Math.min(0.70, camPitch));
-});
-
-window.addEventListener('mousedown', e => {
-  if (e.button !== 0) return;
-  if (!pointerLocked) {
-    document.getElementById('c').requestPointerLock();
-  } else {
-    playerShoot();
-  }
-});
-
-document.addEventListener('pointerlockchange', () => {
-  pointerLocked = document.pointerLockElement === document.getElementById('c');
-  document.getElementById('lock-msg').style.display = (gameActive && !pointerLocked) ? 'block' : 'none';
-});
-
-window.addEventListener('resize', () => {
-  renderer.setSize(innerWidth, innerHeight);
-  camera.aspect = innerWidth / innerHeight;
-  camera.updateProjectionMatrix();
-});
-
-// ═══════════════════════════════════════
-// START
-// ═══════════════════════════════════════
-function startGame() {
-  document.getElementById('screen-start').style.display = 'none';
-  gameActive = true;
-  clock.start();
-  document.getElementById('c').requestPointerLock();
-}
-
-document.getElementById('start-btn').addEventListener('click', startGame);
-
-init();
-loop();
-</script>
+    <!-- Cursor glow effect -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <span class="logo-flag">🇧🇪</span>
+                <span class="logo-text">Belgian</span>
+                <span class="logo-text logo-text--accent">Websites</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#diensten" class="nav-link">Diensten</a>
+                <a href="#werk" class="nav-link">Portfolio</a>
+                <a href="#werkwijze" class="nav-link">Werkwijze</a>
+                <a href="#prijzen" class="nav-link">Prijzen</a>
+                <a href="#contact" class="nav-link nav-link--cta">Contact</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu openen">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+            <div class="hero-gradient"></div>
+            <div class="hero-orb hero-orb--1"></div>
+            <div class="hero-orb hero-orb--2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Beschikbaar voor nieuwe projecten
+            </div>
+            <h1 class="hero-title">
+                <span class="title-line">Jouw bedrijf</span>
+                <span class="title-line title-line--accent">verdient een website</span>
+                <span class="title-line">die werkt.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Moderne, snelle websites voor lokale bedrijven in België. 
+                Geen templates — alles op maat gemaakt zodat jouw bedrijf er professioneel uitziet online.
+            </p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn--primary">
+                    <span>Gratis offerte</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="#werk" class="btn btn--ghost">Bekijk portfolio</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" data-target="15">0</span><span class="stat-suffix">+</span>
+                    <span class="stat-label">Tevreden klanten</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number" data-target="100">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Op maat gemaakt</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number" data-target="7">0</span>
+                    <span class="stat-label">Dagen levertijd</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section diensten" id="diensten">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Wat we doen</span>
+                <h2 class="section-title">Alles wat je nodig hebt<br><span class="text-accent">voor een sterke online aanwezigheid.</span></h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <path d="M8 21h8M12 17v4"/>
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Website Design</h3>
+                    <p class="service-desc">Een moderne website die past bij jouw merk. Responsief design dat er perfect uitziet op elk scherm.</p>
+                    <ul class="service-features">
+                        <li>Responsive design</li>
+                        <li>Moderne uitstraling</li>
+                        <li>SEO-geoptimaliseerd</li>
+                    </ul>
+                </div>
+                <div class="service-card service-card--featured">
+                    <div class="service-badge">Populair</div>
+                    <div class="service-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Complete Website</h3>
+                    <p class="service-desc">Van design tot hosting — wij regelen alles. Jij hoeft alleen maar content aan te leveren.</p>
+                    <ul class="service-features">
+                        <li>Design + Development</li>
+                        <li>Hosting inbegrepen</li>
+                        <li>Contactformulier</li>
+                        <li>Google Maps integratie</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Website Verbetering</h3>
+                    <p class="service-desc">Heb je al een website die beter kan? Wij optimaliseren snelheid, design en vindbaarheid.</p>
+                    <ul class="service-features">
+                        <li>Snelheid optimalisatie</li>
+                        <li>Design refresh</li>
+                        <li>SEO verbetering</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="section portfolio" id="werk">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Portfolio</span>
+                <h2 class="section-title">Recent werk<br><span class="text-accent">waar we trots op zijn.</span></h2>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-card">
+                    <div class="portfolio-image" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+                        <div class="portfolio-mockup">
+                            <div class="mockup-bar">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-nav"></div>
+                                <div class="mockup-hero-block">
+                                    <div class="mockup-title"></div>
+                                    <div class="mockup-subtitle"></div>
+                                    <div class="mockup-btn"></div>
+                                </div>
+                                <div class="mockup-grid-3">
+                                    <div></div><div></div><div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-tag">Restaurant</span>
+                        <h3>Bella Cucina</h3>
+                        <p>Italiaans restaurant in Antwerpen — menu, reserveringen & sfeerbeelden.</p>
+                    </div>
+                </div>
+                <div class="portfolio-card">
+                    <div class="portfolio-image" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);">
+                        <div class="portfolio-mockup">
+                            <div class="mockup-bar">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div class="mockup-content mockup-content--dark">
+                                <div class="mockup-nav"></div>
+                                <div class="mockup-hero-block">
+                                    <div class="mockup-title"></div>
+                                    <div class="mockup-subtitle"></div>
+                                </div>
+                                <div class="mockup-grid-2">
+                                    <div></div><div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-tag">Kapper</span>
+                        <h3>Studio Knipt</h3>
+                        <p>Moderne kapsalon in Gent — online boeken & galerij.</p>
+                    </div>
+                </div>
+                <div class="portfolio-card">
+                    <div class="portfolio-image" style="background: linear-gradient(135deg, #1b2838 0%, #2a475e 50%, #1b2838 100%);">
+                        <div class="portfolio-mockup">
+                            <div class="mockup-bar">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <div class="mockup-content">
+                                <div class="mockup-nav"></div>
+                                <div class="mockup-hero-block">
+                                    <div class="mockup-title mockup-title--wide"></div>
+                                    <div class="mockup-subtitle"></div>
+                                    <div class="mockup-btn"></div>
+                                </div>
+                                <div class="mockup-grid-4">
+                                    <div></div><div></div><div></div><div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portfolio-info">
+                        <span class="portfolio-tag">Fitness</span>
+                        <h3>PowerGym Brugge</h3>
+                        <p>Fitnessclub — abonnementen, lesrooster & virtuele tour.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="section werkwijze" id="werkwijze">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Werkwijze</span>
+                <h2 class="section-title">Simpel & transparant<br><span class="text-accent">in 4 stappen klaar.</span></h2>
+            </div>
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="step-number">01</div>
+                    <h3>Kennismaking</h3>
+                    <p>We bespreken je wensen, doelgroep en stijl. Gratis en vrijblijvend.</p>
+                </div>
+                <div class="process-connector">
+                    <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h36M36 12l-6-6M36 12l-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">02</div>
+                    <h3>Design</h3>
+                    <p>We maken een ontwerp op maat. Je krijgt een preview en kunt feedback geven.</p>
+                </div>
+                <div class="process-connector">
+                    <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h36M36 12l-6-6M36 12l-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">03</div>
+                    <h3>Development</h3>
+                    <p>We bouwen je website met de nieuwste technologieën. Snel, veilig & responsive.</p>
+                </div>
+                <div class="process-connector">
+                    <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h36M36 12l-6-6M36 12l-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">04</div>
+                    <h3>Lancering</h3>
+                    <p>Website gaat live! Inclusief hosting setup en een korte training.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section pricing" id="prijzen">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Prijzen</span>
+                <h2 class="section-title">Eerlijke prijzen<br><span class="text-accent">geen verrassingen.</span></h2>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <p class="pricing-desc">Perfect voor wie net begint</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">€249</span>
+                        <span class="price-period">eenmalig</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>One-page website</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Responsive design</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Contactformulier</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>5 dagen levertijd</li>
+                    </ul>
+                    <a href="#contact" class="btn btn--outline">Kies Starter</a>
+                </div>
+                <div class="pricing-card pricing-card--featured">
+                    <div class="pricing-badge">Best value</div>
+                    <div class="pricing-header">
+                        <h3>Professional</h3>
+                        <p class="pricing-desc">Meest gekozen pakket</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">€449</span>
+                        <span class="price-period">eenmalig</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-page website (5 pagina's)</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Responsive design</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Contactformulier</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Google Maps integratie</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>SEO optimalisatie</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>7 dagen levertijd</li>
+                    </ul>
+                    <a href="#contact" class="btn btn--primary">Kies Professional</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Premium</h3>
+                        <p class="pricing-desc">Voor wie het beste wil</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">€749</span>
+                        <span class="price-period">eenmalig</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Onbeperkt pagina's</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom animaties</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>CMS (eigen content beheren)</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Hosting (1 jaar gratis)</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Prioriteit support</li>
+                        <li><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>10 dagen levertijd</li>
+                    </ul>
+                    <a href="#contact" class="btn btn--outline">Kies Premium</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <span class="section-tag">Contact</span>
+                    <h2 class="section-title">Laten we iets<br><span class="text-accent">moois bouwen.</span></h2>
+                    <p class="contact-desc">Stuur een berichtje en we nemen binnen 24 uur contact op. Vrijblijvend en gratis advies!</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <span>belgianwebsites@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>België 🇧🇪</span>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Naam</label>
+                        <input type="text" id="name" name="name" placeholder="Je volledige naam" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="je@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="business">Bedrijfsnaam</label>
+                            <input type="text" id="business" name="business" placeholder="Je bedrijfsnaam">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="package">Pakket</label>
+                        <select id="package" name="package">
+                            <option value="">Kies een pakket...</option>
+                            <option value="starter">Starter — €249</option>
+                            <option value="professional">Professional — €449</option>
+                            <option value="premium">Premium — €749</option>
+                            <option value="custom">Op maat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Bericht</label>
+                        <textarea id="message" name="message" rows="4" placeholder="Vertel ons over je project..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
+                        <span>Verstuur bericht</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-flag">🇧🇪</span>
+                        <span class="logo-text">Belgian</span>
+                        <span class="logo-text logo-text--accent">Websites</span>
+                    </div>
+                    <p>Professionele websites voor lokale bedrijven in België.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#diensten">Diensten</a>
+                    <a href="#werk">Portfolio</a>
+                    <a href="#werkwijze">Werkwijze</a>
+                    <a href="#prijzen">Prijzen</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belgian Websites. Alle rechten voorbehouden.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
