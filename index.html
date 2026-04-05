@@ -24,7 +24,7 @@
             </a>
             <div class="nav-links" id="navLinks">
                 <a href="#diensten" class="nav-link">Diensten</a>
-                <a href="#werk" class="nav-link">Portfolio</a>
+                <a href="#werk" class="nav-link">Voorbeelden</a>
                 <a href="#werkwijze" class="nav-link">Werkwijze</a>
                 <a href="#prijzen" class="nav-link">Prijzen</a>
                 <a href="#contact" class="nav-link nav-link--cta">Contact</a>
@@ -144,12 +144,12 @@
         </div>
     </section>
 
-    <!-- Portfolio Section -->
+    <!-- Voorbeelden Section -->
     <section class="section portfolio" id="werk">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">Portfolio</span>
-                <h2 class="section-title">Recent werk<br><span class="text-accent">waar we trots op zijn.</span></h2>
+                <span class="section-tag">Voorbeelden</span>
+                <h2 class="section-title">Dit soort websites<br><span class="text-accent">bouwen wij voor jou.</span></h2>
             </div>
             <div class="portfolio-grid">
                 <div class="portfolio-card">
@@ -172,9 +172,9 @@
                         </div>
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-tag">Restaurant</span>
-                        <h3>Bella Cucina</h3>
-                        <p>Italiaans restaurant in Antwerpen — menu, reserveringen & sfeerbeelden.</p>
+                        <span class="portfolio-tag">Horeca</span>
+                        <h3>Restaurant & Café</h3>
+                        <p>Menu, reserveringen, openingsuren & sfeerbeelden — alles wat je gasten nodig hebben.</p>
                     </div>
                 </div>
                 <div class="portfolio-card">
@@ -196,9 +196,9 @@
                         </div>
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-tag">Kapper</span>
-                        <h3>Studio Knipt</h3>
-                        <p>Moderne kapsalon in Gent — online boeken & galerij.</p>
+                        <span class="portfolio-tag">Beauty & Wellness</span>
+                        <h3>Kapper & Salon</h3>
+                        <p>Online afspraken boeken, galerij met resultaten & prijslijst.</p>
                     </div>
                 </div>
                 <div class="portfolio-card">
@@ -221,9 +221,9 @@
                         </div>
                     </div>
                     <div class="portfolio-info">
-                        <span class="portfolio-tag">Fitness</span>
-                        <h3>PowerGym Brugge</h3>
-                        <p>Fitnessclub — abonnementen, lesrooster & virtuele tour.</p>
+                        <span class="portfolio-tag">Dienstverlening</span>
+                        <h3>Loodgieter & Vakman</h3>
+                        <p>Diensten, contactformulier, reviews & werkgebied — klanten vinden jou makkelijk.</p>
                     </div>
                 </div>
             </div>
@@ -418,7 +418,7 @@
                 </div>
                 <div class="footer-links">
                     <a href="#diensten">Diensten</a>
-                    <a href="#werk">Portfolio</a>
+                    <a href="#werk">Voorbeelden</a>
                     <a href="#werkwijze">Werkwijze</a>
                     <a href="#prijzen">Prijzen</a>
                     <a href="#contact">Contact</a>
@@ -430,6 +430,221 @@
         </div>
     </footer>
 
+    <!-- ============================================
+         ADMIN PANEL (Hidden — Ctrl+Shift+A or ?admin)
+         ============================================ -->
+    <div class="admin-overlay" id="adminOverlay">
+        <!-- Password Gate -->
+        <div class="admin-login" id="adminLogin">
+            <div class="admin-login-card">
+                <div class="admin-login-header">
+                    <span class="logo-flag">🇧🇪</span>
+                    <h2>Admin Panel</h2>
+                    <p>Belgian Websites — Beheer</p>
+                </div>
+                <form id="adminLoginForm">
+                    <div class="admin-form-group">
+                        <input type="password" id="adminPassword" placeholder="Wachtwoord..." autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full">
+                        <span>Inloggen</span>
+                    </button>
+                    <p class="admin-error" id="adminError"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div class="admin-dashboard" id="adminDashboard" style="display:none;">
+            <div class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <span class="logo-flag">🇧🇪</span>
+                    <span class="admin-title">Belgian Websites — Admin</span>
+                </div>
+                <div class="admin-topbar-right">
+                    <button class="admin-tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+                    <button class="admin-tab-btn" data-tab="checker">🔍 Website Checker</button>
+                    <button class="admin-tab-btn" data-tab="leads">📋 Leads</button>
+                    <button class="admin-tab-btn" data-tab="outreach">📧 Outreach</button>
+                    <button class="admin-close-btn" id="adminClose">✕</button>
+                </div>
+            </div>
+
+            <div class="admin-content">
+                <!-- Tab: Dashboard -->
+                <div class="admin-tab active" id="tab-dashboard">
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">📋</div>
+                            <div class="admin-stat-number" id="statTotal">0</div>
+                            <div class="admin-stat-label">Totaal Leads</div>
+                        </div>
+                        <div class="admin-stat-card admin-stat-card--hot">
+                            <div class="admin-stat-icon">🔴</div>
+                            <div class="admin-stat-number" id="statHigh">0</div>
+                            <div class="admin-stat-label">Hoge Kans</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">🟡</div>
+                            <div class="admin-stat-number" id="statMedium">0</div>
+                            <div class="admin-stat-label">Medium Kans</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon">📨</div>
+                            <div class="admin-stat-number" id="statContacted">0</div>
+                            <div class="admin-stat-label">Gecontacteerd</div>
+                        </div>
+                    </div>
+                    <div class="admin-section">
+                        <h3>🔥 Hot Leads — Geen Website</h3>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="hotLeadsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Bedrijf</th>
+                                        <th>Type</th>
+                                        <th>Stad</th>
+                                        <th>Kans</th>
+                                        <th>Status</th>
+                                        <th>Acties</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <p class="admin-empty" id="hotLeadsEmpty">Nog geen leads. Gebruik de Website Checker om te beginnen!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Website Checker -->
+                <div class="admin-tab" id="tab-checker">
+                    <div class="admin-section">
+                        <h3>🔍 Website Checker</h3>
+                        <p class="admin-section-desc">Voer een URL in om de website te analyseren, of voeg handmatig een bedrijf toe.</p>
+                        
+                        <div class="checker-input-group">
+                            <input type="url" id="checkerUrl" placeholder="https://voorbeeld.be" class="checker-input">
+                            <button class="btn btn--primary" id="checkerBtn">
+                                <span>Analyseer</span>
+                            </button>
+                        </div>
+
+                        <div class="checker-result" id="checkerResult" style="display:none;">
+                            <div class="checker-score-ring">
+                                <svg viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke-width="8" stroke-linecap="round"
+                                        id="checkerScoreCircle"
+                                        stroke-dasharray="327" stroke-dashoffset="327"
+                                        transform="rotate(-90 60 60)"/>
+                                </svg>
+                                <div class="checker-score-text">
+                                    <span id="checkerScoreNum">0</span>
+                                    <small>/100</small>
+                                </div>
+                            </div>
+                            <div class="checker-details">
+                                <div class="checker-opportunity" id="checkerOpp">-</div>
+                                <ul class="checker-issues" id="checkerIssues"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h3>➕ Bedrijf Handmatig Toevoegen</h3>
+                        <form id="addLeadForm" class="add-lead-form">
+                            <div class="add-lead-row">
+                                <input type="text" id="leadName" placeholder="Bedrijfsnaam" required>
+                                <input type="text" id="leadType" placeholder="Type (kapper, restaurant...)" required>
+                                <input type="text" id="leadCity" placeholder="Stad" required>
+                            </div>
+                            <div class="add-lead-row">
+                                <input type="url" id="leadWebsite" placeholder="Website URL (leeg = geen website)">
+                                <input type="text" id="leadContact" placeholder="E-mail of telefoon">
+                                <button type="submit" class="btn btn--primary">Toevoegen</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab: Leads -->
+                <div class="admin-tab" id="tab-leads">
+                    <div class="admin-section">
+                        <div class="admin-section-header">
+                            <h3>📋 Alle Leads</h3>
+                            <div class="admin-section-actions">
+                                <select id="filterOpportunity" class="admin-select">
+                                    <option value="">Alle kansen</option>
+                                    <option value="HIGH">🔴 Hoog</option>
+                                    <option value="MEDIUM">🟡 Medium</option>
+                                    <option value="LOW">🟢 Laag</option>
+                                </select>
+                                <select id="filterStatus" class="admin-select">
+                                    <option value="">Alle statussen</option>
+                                    <option value="new">Nieuw</option>
+                                    <option value="contacted">Gecontacteerd</option>
+                                    <option value="interested">Geïnteresseerd</option>
+                                    <option value="closed">Afgesloten</option>
+                                </select>
+                                <button class="btn btn--ghost" id="exportCsvBtn">📁 Export CSV</button>
+                            </div>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="allLeadsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Bedrijf</th>
+                                        <th>Type</th>
+                                        <th>Stad</th>
+                                        <th>Website</th>
+                                        <th>Score</th>
+                                        <th>Kans</th>
+                                        <th>Status</th>
+                                        <th>Acties</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <p class="admin-empty" id="allLeadsEmpty">Nog geen leads in de database.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Outreach -->
+                <div class="admin-tab" id="tab-outreach">
+                    <div class="admin-section">
+                        <h3>📧 Outreach Generator</h3>
+                        <p class="admin-section-desc">Selecteer een lead en genereer een gepersonaliseerd bericht.</p>
+
+                        <div class="outreach-controls">
+                            <select id="outreachLead" class="admin-select admin-select--wide">
+                                <option value="">Kies een lead...</option>
+                            </select>
+                            <select id="outreachTemplate" class="admin-select">
+                                <option value="auto">Auto-detect</option>
+                                <option value="no_website">Geen website</option>
+                                <option value="bad_website">Slechte website</option>
+                                <option value="placeholder_website">Website in opbouw</option>
+                                <option value="instagram_dm">Instagram DM</option>
+                            </select>
+                            <button class="btn btn--primary" id="generateOutreach">Genereer</button>
+                        </div>
+
+                        <div class="outreach-preview" id="outreachPreview" style="display:none;">
+                            <div class="outreach-subject" id="outreachSubject"></div>
+                            <div class="outreach-body" id="outreachBody"></div>
+                            <div class="outreach-actions">
+                                <button class="btn btn--primary" id="copyOutreach">📋 Kopieer</button>
+                                <button class="btn btn--ghost" id="markContacted">✅ Markeer als gecontacteerd</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
