@@ -1,0 +1,7 @@
+# Belgian Websites — Bot folder (niet voor GitHub Pages)
+bot/
+leads/
+
+# OS files
+.DS_Store
+Thumbs.db
