@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Reader – June 2026 5 D/A · Study Summaries</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1815;
+    --paper: #faf8f4;
+    --cream: #f0ece2;
+    --rule: #d4cfc4;
+    --accent: #c84b2f;
+    --accent2: #2f6b8f;
+    --accent3: #4a7c3f;
+    --accent4: #7a4fc4;
+    --accent5: #b87a1a;
+    --muted: #6b6560;
+    --tag-bg: #e8e2d6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 2.5rem 3rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0, var(--accent) 40px, var(--paper) 40px, var(--paper) 44px);
+  }
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .masthead h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .masthead h1 span { color: var(--accent); }
+  .masthead-meta {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+    border-left: 2px solid var(--rule);
+    padding-left: 1rem;
+    line-height: 1.8;
+  }
+  .masthead-sub {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--rule);
+    padding-top: 0.75rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .masthead-sub a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .masthead-sub a:hover { color: var(--accent); }
+
+  /* ── DOWNLOAD ALL ── */
+  .download-all-bar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.9rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .download-all-bar p { font-size: 0.85rem; opacity: 0.75; }
+  .btn-download-all {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background .2s, transform .1s;
+  }
+  .btn-download-all:hover { background: #a83a20; }
+  .btn-download-all:active { transform: scale(0.97); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── CARD ── */
+  .card {
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 2rem 2rem 1.5rem;
+    position: relative;
+    transition: background .2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover { background: var(--cream); }
+
+  .card-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.04em;
+  }
+
+  .card-accent-bar {
+    height: 3px;
+    width: 40px;
+    margin-bottom: 1rem;
+    border-radius: 1px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-source {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 1.2rem;
+  }
+
+  .card-summary {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #3a3633;
+    margin-bottom: 1.2rem;
+    flex: 1;
+  }
+
+  .themes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 1.2rem;
+  }
+  .theme-tag {
+    font-size: 0.68rem;
+    padding: 3px 9px;
+    background: var(--tag-bg);
+    border-radius: 2px;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* vocab table */
+  .vocab-toggle {
+    font-size: 0.75rem;
+    color: var(--accent2);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: underline;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .vocab-panel {
+    display: none;
+    border-top: 1px solid var(--rule);
+    padding-top: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .vocab-panel.open { display: block; }
+  .vocab-entry {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px dotted var(--rule);
+    line-height: 1.4;
+  }
+  .vocab-word {
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+  .vocab-def { color: var(--muted); }
+
+  /* grammar box */
+  .grammar-box {
+    background: var(--cream);
+    border-left: 3px solid var(--accent5);
+    padding: 0.6rem 0.8rem;
+    font-size: 0.78rem;
+    color: #4a3c10;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+    display: none;
+  }
+  .grammar-box.show { display: block; }
+
+  /* card footer */
+  .card-footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 0.9rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.9rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all .15s;
+    border: 1px solid currentColor;
+    background: transparent;
+  }
+  .btn-primary {
+    color: white;
+    border-color: transparent;
+    background: var(--ink);
+  }
+  .btn-primary:hover { opacity: 0.8; }
+  .btn-secondary { color: var(--muted); }
+  .btn-secondary:hover { color: var(--ink); background: var(--tag-bg); }
+
+  /* ── CONTEXT LABELS ── */
+  .context-section {
+    margin-bottom: 1rem;
+  }
+  .context-section h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .context-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    align-items: flex-start;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .ctx-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .ctx-thesis    { background: #fde8e4; color: #8c2a14; }
+  .ctx-evidence  { background: #e4f0f9; color: #14507a; }
+  .ctx-counter   { background: #f4eafb; color: #5a2880; }
+  .ctx-concede   { background: #e9f7e9; color: #245a20; }
+  .ctx-personal  { background: #fff4e0; color: #7a4500; }
+  .ctx-conclude  { background: #e2e8f0; color: #2d3748; }
+  .ctx-quote     { background: #fef9e0; color: #6b4e00; }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    border-top: 3px double var(--ink);
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .site-footer strong { color: var(--ink); }
+
+  /* print */
+  @media print {
+    .btn, .btn-download-all, .vocab-toggle, .download-all-bar, .masthead-sub { display: none !important; }
+    .vocab-panel { display: block !important; }
+    .grammar-box { display: block !important; }
+    .card { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-top">
+    <h1>Exam <span>Reader</span><br>June 2026 · 5 D/A</h1>
+    <div class="masthead-meta">
+      Óscar Romero College<br>
+      English · All Texts<br>
+      Study Summaries
+    </div>
+  </div>
+  <div class="masthead-sub">
+    <span>8 texts annotated</span>
+    <a href="#text1">Internet collapse</a>
+    <a href="#text2">Aeroponics</a>
+    <a href="#text3">Fox Talbot</a>
+    <a href="#text4a">Dorothea Lange</a>
+    <a href="#text4b">Climate change</a>
+    <a href="#text6">Leaving home</a>
+    <a href="#text7">Silicon Valley</a>
+    <a href="#text8">Denim Jacket</a>
+  </div>
+</header>
+
+<!-- DOWNLOAD ALL BAR -->
+<div class="download-all-bar">
+  <p>Download individual summaries as .txt files, or get all at once.</p>
+  <button class="btn-download-all" onclick="downloadAll()">⬇ Download all summaries</button>
+</div>
+
+<!-- CARD GRID -->
+<main class="grid">
+
+  <!-- TEXT 1 -->
+  <article class="card" id="text1">
+    <div class="card-number">01</div>
+    <div class="card-accent-bar" style="background:#c84b2f"></div>
+    <h2 class="card-title">What if the internet collapsed?</h2>
+    <p class="card-source">Al Nebi – Linguapress · Informative / speculative</p>
+    <p class="card-summary">
+      A speculative article asking what would happen if the entire internet failed worldwide. It opens with relatable moments of local outage before scaling up to a global scenario. Optimists believe the internet is too resilient to collapse globally; but a growing number of engineers warn it is not impossible. If it did fail: financial systems crash, supply chains break, hospitals fall into chaos, governments declare emergencies. Over time, societies adapt — returning to 1990s-style communication — while gaining unexpected benefits like less cybercrime and lower energy use. The article ends on a forward-looking note about resilience and local networks.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Technology & fragility</span>
+      <span class="theme-tag">Global interdependence</span>
+      <span class="theme-tag">Resilience</span>
+      <span class="theme-tag">Optimism vs pessimism</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Thesis</span><span>The internet is fragile and a global collapse, while unlikely, is not impossible.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-counter">Counter</span><span>Optimists: the internet is too decentralised to fail at global scale.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Evidence</span><span>Past local outages (Spain, USA) give a glimpse of what global failure would look like.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-concede">Silver lining</span><span>Lower energy use, no cybercrime, less social media pressure.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Conclusion</span><span>World reorganises around local networks and physical systems — a new technological era.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (6 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">fragile</span><span class="vocab-def">easily broken; vulnerable to failure</span></div>
+      <div class="vocab-entry"><span class="vocab-word">resilient</span><span class="vocab-def">able to recover quickly from difficulties</span></div>
+      <div class="vocab-entry"><span class="vocab-word">uncentralized</span><span class="vocab-def">spread out; not controlled from one point</span></div>
+      <div class="vocab-entry"><span class="vocab-word">grind to a halt</span><span class="vocab-def">stop completely, slowly and painfully</span></div>
+      <div class="vocab-entry"><span class="vocab-word">supply chain</span><span class="vocab-def">the network moving goods from producer to consumer</span></div>
+      <div class="vocab-entry"><span class="vocab-word">misinformation</span><span class="vocab-def">false or inaccurate information spread widely</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Future simple ('will fail', 'will grind to a halt') is used throughout the consequences section — this creates a tone of certainty about predicted outcomes. Also: 'too [adj] to [verb]' = so much of a quality that the action is impossible (e.g. "too resilient to fail").
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(1)">⬇ Download summary</button>
+      <button class="btn btn-secondary" onclick="toggleVocab(this.closest('.card').querySelector('.vocab-toggle'))">Toggle vocab</button>
+    </div>
+  </article>
+
+  <!-- TEXT 2 -->
+  <article class="card" id="text2">
+    <div class="card-number">02</div>
+    <div class="card-accent-bar" style="background:#2f6b8f"></div>
+    <h2 class="card-title">Aeroponics: feeding tomorrow's world?</h2>
+    <p class="card-source">Linguapress · Informative / argumentative</p>
+    <p class="card-summary">
+      A scientific-argumentative article making the case for aeroponics — growing plants with roots suspended in air, misted with a nutrient-rich solution — as a sustainable food technology. It begins with the global food waste problem (UN FAO: ~50% of fruit and vegetables wasted) and the pressures of population growth. It then compares aeroponics to traditional and hydroponic farming, showing aeroponics eliminates water waste entirely, avoids nutrient run-off (unlike conventional farms in Brittany, France), and can be practised anywhere — including indoors. Chicago's O'Hare airport has hosted an aeroponic garden since 2011. The article concludes that local aeroponic production could dramatically cut the environmental cost of shipping food thousands of miles.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Food sustainability</span>
+      <span class="theme-tag">Innovation vs tradition</span>
+      <span class="theme-tag">Resource waste</span>
+      <span class="theme-tag">Population pressure</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Thesis</span><span>Aeroponics reduces natural resource use and waste — essential for a sustainable future.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Evidence</span><span>UN FAO: 50% of fruit/veg wasted. Chicago vegetables travel 3,000+ km. NASA: Southern California 4.2 gigatons water deficit/year.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-concede">Concession</span><span>Eliminating all waste is impossible — but reducing from 50% toward 0% is realistic.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Conclusion</span><span>Local aeroponic farms in cities = huge cut in water, minerals, transport costs at global scale.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (7 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">aeroponics</span><span class="vocab-def">growing plants in air/mist, roots sprayed with nutrients — no soil or water trough</span></div>
+      <div class="vocab-entry"><span class="vocab-word">hydroponics</span><span class="vocab-def">growing plants in nutrient-rich water (step before aeroponics)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">wastage</span><span class="vocab-def">the amount wasted; unnecessary loss of a resource</span></div>
+      <div class="vocab-entry"><span class="vocab-word">nutrient</span><span class="vocab-def">a substance that plants/animals need to grow and stay healthy</span></div>
+      <div class="vocab-entry"><span class="vocab-word">algal bloom</span><span class="vocab-def">rapid algae growth caused by excess nutrients — harms water ecosystems</span></div>
+      <div class="vocab-entry"><span class="vocab-word">self-sufficient</span><span class="vocab-def">able to produce everything one needs without importing</span></div>
+      <div class="vocab-entry"><span class="vocab-word">optimum</span><span class="vocab-def">the best or most favourable conditions</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Gerund as subject — "Cutting out all waste … is an impossible goal." The gerund (-ing form) acts as the subject of the sentence. Also watch for conditional urgency: "If our world is to survive … we have no choice but to…"
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(2)">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 3 -->
+  <article class="card" id="text3">
+    <div class="card-number">03</div>
+    <div class="card-accent-bar" style="background:#4a7c3f"></div>
+    <h2 class="card-title">William Fox Talbot & the origins of photography</h2>
+    <p class="card-source">Linguapress · Biographical / historical</p>
+    <p class="card-summary">
+      A biographical article tracing the invention of photography to William Henry Fox Talbot (1800–), an English polymath elected to the Royal Society at 31. While travelling Europe in the 1830s and using a camera obscura to sketch, Fox Talbot began experimenting with light-sensitive chemicals on paper to fix images automatically — producing the 'calotype'. In 1839, French inventor Louis Daguerre announced a rival process (the daguerrotype, using metal plates). Fox Talbot immediately responded with his own announcement. The calotype's negative/positive paper process proved simpler and became the international standard. Within 40 years others improved it; photography spread across Europe and North America. The article ends by contrasting Fox Talbot's slow process with today's instant digital photography.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">History of invention</span>
+      <span class="theme-tag">Science & discovery</span>
+      <span class="theme-tag">Competition & progress</span>
+      <span class="theme-tag">Then vs now</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-personal">Personal history</span><span>Fox Talbot: born 1800, Cambridge, elected Royal Society at 31. Broad education: classics, chemistry, Hebrew, botany, maths.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Key fact</span><span>The oldest surviving photo in the world: the 'Oriel window' at Lacock, 1835.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-counter">Rival</span><span>Daguerre's daguerrotype (1839) — more complex, metal plates, positive image.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Outcome</span><span>Calotype (negative/positive on paper) won out and became the world standard.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (6 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">calotype</span><span class="vocab-def">Fox Talbot's photographic process — negative image on chemically treated paper</span></div>
+      <div class="vocab-entry"><span class="vocab-word">daguerrotype</span><span class="vocab-def">Daguerre's rival process — positive image on metal plate, more complex</span></div>
+      <div class="vocab-entry"><span class="vocab-word">impregnated</span><span class="vocab-def">soaked with / infused with (chemicals)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">camera obscura</span><span class="vocab-def">a box with a lens that projects an external image inside — used for drawing</span></div>
+      <div class="vocab-entry"><span class="vocab-word">the latter</span><span class="vocab-def">the second of two things just mentioned (formal linking device)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">contemporaries</span><span class="vocab-def">people living or working at the same time as the person mentioned</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> "While Daguerre's process produced a positive image on metal, Fox Talbot's produced a negative image on paper" — 'while' introduces a contrast clause. Also: "the latter finally disappeared" — 'the latter' always refers to the second of two previously named items.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(3)">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 4a -->
+  <article class="card" id="text4a">
+    <div class="card-number">4a</div>
+    <div class="card-accent-bar" style="background:#7a4fc4"></div>
+    <h2 class="card-title">Dorothea Lange: a visionary whose camera never lied</h2>
+    <p class="card-source">Abridged from The Guardian · Profile / literary journalism</p>
+    <p class="card-summary">
+      A vivid profile of American documentary photographer Dorothea Lange (1895–1965). In 1936, driving through California, Lange photographed a destitute pea-pickers camp and captured the 'Migrant Mother' — a 32-year-old woman from Oklahoma with 6 children. Published in the San Francisco News, it prompted the federal government to rush aid. Hired by the Farm Security Administration, Lange documented Depression-era agricultural workers. Her courage showed early: she took her mother's maiden name when her father deserted the family, studied photography before she could afford a camera, and contracted polio leaving her with a limp she said "formed me, guided me, instructed me". The text praises her empathy, literary titling of images, and collaboration with John Steinbeck. Her approach: "A camera is a tool for learning how to see without a camera."
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Art with social purpose</span>
+      <span class="theme-tag">Justice & inequality</span>
+      <span class="theme-tag">Individual vs situation</span>
+      <span class="theme-tag">Courage & adversity</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Argument</span><span>Art has real uses — Lange's photography is the proof; it changed government policy.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-personal">Personal history</span><span>Polio, absent father, self-taught; her adversity shaped her empathy.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Impact</span><span>Federal aid to the camp within days of publication. Hired by Farm Security Administration.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-quote">Key quote</span><span>"I never steal a photograph." / "A camera is a tool for learning how to see without a camera."</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (6 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">visionary</span><span class="vocab-def">someone with original ideas; here = one who saw truth others missed</span></div>
+      <div class="vocab-entry"><span class="vocab-word">destitute</span><span class="vocab-def">extremely poor; without basic necessities</span></div>
+      <div class="vocab-entry"><span class="vocab-word">defiant</span><span class="vocab-def">boldly resistant to authority or norms</span></div>
+      <div class="vocab-entry"><span class="vocab-word">principled</span><span class="vocab-def">acting according to strong moral rules</span></div>
+      <div class="vocab-entry"><span class="vocab-word">palpable</span><span class="vocab-def">so strong it seems almost touchable/visible</span></div>
+      <div class="vocab-entry"><span class="vocab-word">portraiture</span><span class="vocab-def">the art of making portraits — here used to describe her documentary style</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Fronted adjectives for emphasis — "Defiant, principled, tireless in her pursuit … Lange is a heroine of the lens." Placing adjectives before the subject creates dramatic impact. Interrupted direct speech: "'A camera is a tool,' she once said, 'for learning…'" — the attribution splits the quote.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary('4a')">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 4b -->
+  <article class="card" id="text4b">
+    <div class="card-number">4b</div>
+    <div class="card-accent-bar" style="background:#b87a1a"></div>
+    <h2 class="card-title">Climate change – can we stop it?</h2>
+    <p class="card-source">Linguapress · Informative / argumentative</p>
+    <p class="card-summary">
+      An accessible but urgent article about climate change. It dismisses denial positions (climate change is not real / not human-caused) before establishing scientific consensus: the world is getting hotter and humans are responsible. The 2021 COP26 summit in Glasgow set targets — many countries pledged carbon neutrality by 2050, committing to stop using coal and oil. The 'coal dilemma' is explored in depth: coal-dependent countries cannot switch off coal without alternative electricity sources, and solar/wind are intermittent. The article identifies obstacles: expensive green technology, political cowardice, big companies prioritising profit. It ends with a rhetorical double negative: we cannot afford not to fight climate change, because a catastrophe costs more than prevention.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Climate crisis</span>
+      <span class="theme-tag">Political responsibility</span>
+      <span class="theme-tag">Science vs denial</span>
+      <span class="theme-tag">Economic trade-offs</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Thesis</span><span>The world is heating; we must act now — inaction is more expensive than action.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-counter">Counter (dismissed)</span><span>"Climate change is not real." / "We cannot stop it." / "It's not caused by humans."</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Evidence</span><span>COP26 (2021, Glasgow) commitments. Carbon neutrality pledges. Coal dilemma in dependent countries.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Obstacles</span><span>Cost of green tech, political inaction, coal dependency in China/Poland/Greece, poorer nations lacking technology.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Conclusion</span><span>"We cannot afford not to fight climate change" — double negative for rhetorical force.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (6 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">drastic</span><span class="vocab-def">strong and extreme — used when urgent, severe action is needed</span></div>
+      <div class="vocab-entry"><span class="vocab-word">catastrophe</span><span class="vocab-def">a sudden, large-scale disaster with severe consequences</span></div>
+      <div class="vocab-entry"><span class="vocab-word">carbon neutral</span><span class="vocab-def">producing no net CO₂ — balancing emissions with removal</span></div>
+      <div class="vocab-entry"><span class="vocab-word">renewables</span><span class="vocab-def">energy from naturally replenished sources: wind, solar, hydro</span></div>
+      <div class="vocab-entry"><span class="vocab-word">intermittent</span><span class="vocab-def">not continuous; stopping and starting (sun/wind are intermittent)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">consensus</span><span class="vocab-def">general agreement among a group — here: scientific agreement on climate</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Double negative for rhetorical emphasis: "we cannot afford not to fight" = we absolutely must fight. Also: parallel structure in criticism — "they make promises, but they do not keep them" — simple sentences in contrast creates powerful emphasis.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary('4b')">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 6 -->
+  <article class="card" id="text6">
+    <div class="card-number">06</div>
+    <div class="card-accent-bar" style="background:#c84b2f"></div>
+    <h2 class="card-title">Leaving home… a teenage dilemma</h2>
+    <p class="card-source">Linguapress · Socio-cultural / feature</p>
+    <p class="card-summary">
+      A British socio-cultural feature on teenagers leaving home. It opens with the gap between the teenage dream of independence and the harsh reality. A survey shows most 12–15 year olds want to leave at 16, but 18–19 year olds in hindsight say 18 is more sensible. The article then tracks homelessness among young people in London — rising numbers now driven by 'push factors' (broken homes, poverty, aggression) rather than 'pull factors' (excitement, jobs). Statistics: single-parent families rose from 5% (1961) to 25% (2025) in the UK. Three personal testimonies follow: Simon (stays home happily), Sarah (pulled to London by boredom, doing OK), and Darren (pushed out by family chaos, now in a homeless hostel, training to be a builder). A final section on British boarding schools and university shows other pathways to independence.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Independence & growing up</span>
+      <span class="theme-tag">Social inequality</span>
+      <span class="theme-tag">Push vs pull factors</span>
+      <span class="theme-tag">British culture & class</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Thesis</span><span>Leaving home is a key British teenage milestone — but increasingly driven by hardship, not aspiration.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Statistics</span><span>Survey data (12–15 vs 18–19 year olds). Single-parent families: 5% → 25%. 69,000 boarders in 2024.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-personal">Testimonies</span><span>Simon (stay), Sarah (pull factor — boredom), Darren (push factor — family breakdown).</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Conclusion (implied)</span><span>University/boarding school = structured independence; homelessness = unstructured crisis.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (7 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">pull factors</span><span class="vocab-def">positive reasons attracting someone to a new place (jobs, excitement)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">push factors</span><span class="vocab-def">negative conditions driving someone away from home (poverty, violence)</span></div>
+      <div class="vocab-entry"><span class="vocab-word">cooped up</span><span class="vocab-def">confined in a small or restrictive space; feeling trapped</span></div>
+      <div class="vocab-entry"><span class="vocab-word">definitive break</span><span class="vocab-def">a permanent, final separation — not a temporary departure</span></div>
+      <div class="vocab-entry"><span class="vocab-word">boarding school</span><span class="vocab-def">a school where pupils live during term time, not just attend in the day</span></div>
+      <div class="vocab-entry"><span class="vocab-word">qualifications</span><span class="vocab-def">official certificates showing you have passed exams or completed training</span></div>
+      <div class="vocab-entry"><span class="vocab-word">allowance</span><span class="vocab-def">a regular amount of money given by parents to support a child</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Reported speech without quotation marks — common in journalism: "thought that teenagers should be allowed to leave home at 16." Also: informal register in testimonies — "I s'pose", "I couldn't stand it" — contrasts with the formal register of the article body.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(6)">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 7 -->
+  <article class="card" id="text7">
+    <div class="card-number">07</div>
+    <div class="card-accent-bar" style="background:#2f6b8f"></div>
+    <h2 class="card-title">The story of Silicon Valley</h2>
+    <p class="card-source">Linguapress · Historical / explanatory</p>
+    <p class="card-summary">
+      A concise history of Silicon Valley — the tech hub near San Francisco — explaining what it is, where it is, and why it formed there. The answer lies in 1960s counterculture: hippies and radical students at Berkeley and Stanford created a culture of anti-establishment entrepreneurship. The best graduates didn't join Ford or Exxon — they stayed in California and ran their own companies. The high-tech infrastructure was already present: Intel (1968), the first computer mouse at Stanford (1968), Xerox PARC (1970), Hewlett Packard, Fairchild. In 1976, Steve Jobs started Apple in his garage. Soon Seagate, Google and others arrived. The Arpanet — a primitive internet — connected many Valley addresses. Today Silicon Valley remains the world's largest concentration of tech companies, though Microsoft is based near Seattle, not in the Valley.
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Innovation & entrepreneurship</span>
+      <span class="theme-tag">Counterculture as catalyst</span>
+      <span class="theme-tag">American identity</span>
+      <span class="theme-tag">Technology & geography</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Rhetorical structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Hook</span><span>"If old America was made in New York or Detroit, modern America is made in Silicon Valley."</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Key facts</span><span>Intel 1968. Computer mouse 1968. Xerox PARC 1970. Apple garage 1976. Arpanet (pre-internet).</span></div>
+      <div class="context-item"><span class="ctx-label ctx-personal">Cultural context</span><span>1960s counterculture: hippies + radical students at Berkeley/Stanford = anti-establishment entrepreneurship.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Conclusion</span><span>Silicon Valley still biggest tech concentration; Microsoft is the notable exception (Seattle).</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (6 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">semiconductor</span><span class="vocab-def">a material (like silicon) that conducts electricity under certain conditions — core to all computer chips</span></div>
+      <div class="vocab-entry"><span class="vocab-word">hot-bed</span><span class="vocab-def">a place where a particular activity develops rapidly</span></div>
+      <div class="vocab-entry"><span class="vocab-word">radical</span><span class="vocab-def">someone who wants fundamental political or social change</span></div>
+      <div class="vocab-entry"><span class="vocab-word">Arpanet</span><span class="vocab-def">early US military/academic network — the precursor to the internet</span></div>
+      <div class="vocab-entry"><span class="vocab-word">concentration</span><span class="vocab-def">a large number of things gathered in one area</span></div>
+      <div class="vocab-entry"><span class="vocab-word">flower power</span><span class="vocab-def">slogan of the 1960s peace/hippie movement</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Parallel structure in the opening: "If old America was made in X, modern America is made in Y" — elegant contrast using the same structure. Also: 'Instead' as a discourse marker — "Instead, they wanted to be free" — signals a sharp change of direction in the argument.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(7)">⬇ Download summary</button>
+    </div>
+  </article>
+
+  <!-- TEXT 8 -->
+  <article class="card" id="text8">
+    <div class="card-number">08</div>
+    <div class="card-accent-bar" style="background:#4a7c3f"></div>
+    <h2 class="card-title">The girl in the denim jacket</h2>
+    <p class="card-source">Andrew Rossiter – Linguapress · Short story / fiction</p>
+    <p class="card-summary">
+      A first-person short story told in retrospect. At 2am, the narrator — a college student — cannot sleep and writes down what happened earlier that evening. At Willesden Junction (London Underground), he notices a mysterious, beautiful, worried-looking girl in a denim jacket carrying English-language books. They share a glance and a smile on the platform. On the train they both sit near each other but don't talk. As the train halts at Harrow, they finally begin to speak — she answers in broken English. Suddenly three plain-clothes police officers board, identify the girl and arrest her. She grabs the narrator's arm in fear, struggles, drops her bracelet. The narrator protests but is silenced by the inspector. The girl is dragged away, crying. When the train moves, the narrator picks up the bracelet — it's an identity bracelet with no name. The ending is deliberately ambiguous: who is she? Why was she arrested?
+    </p>
+    <div class="themes">
+      <span class="theme-tag">Mystery & suspense</span>
+      <span class="theme-tag">Chance encounters</span>
+      <span class="theme-tag">Immigration & identity</span>
+      <span class="theme-tag">Empathy vs helplessness</span>
+    </div>
+
+    <div class="context-section">
+      <h4>Narrative structure</h4>
+      <div class="context-item"><span class="ctx-label ctx-thesis">Opening</span><span>In medias res — narrator awake at 2am, writing down what happened. Creates immediate intrigue.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-evidence">Rising tension</span><span>Platform encounter → train → shared seats → first words → police arrive.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-personal">Character clues</span><span>Denim jacket, English-learning books, broken English, worried eyes, no name on bracelet.</span></div>
+      <div class="context-item"><span class="ctx-label ctx-conclude">Ambiguous ending</span><span>Identity bracelet has no name — identity unknown. Reader left to interpret who she is and why she was arrested.</span></div>
+    </div>
+
+    <button class="vocab-toggle" onclick="toggleVocab(this)">▶ Show key vocabulary (7 words)</button>
+    <div class="vocab-panel">
+      <div class="vocab-entry"><span class="vocab-word">in medias res</span><span class="vocab-def">starting a story in the middle of the action — a classic literary technique</span></div>
+      <div class="vocab-entry"><span class="vocab-word">blurted out</span><span class="vocab-def">said something suddenly and without thinking</span></div>
+      <div class="vocab-entry"><span class="vocab-word">running you in</span><span class="vocab-def">British slang: arresting you</span></div>
+      <div class="vocab-entry"><span class="vocab-word">hustled</span><span class="vocab-def">pushed/pulled quickly and roughly</span></div>
+      <div class="vocab-entry"><span class="vocab-word">half-hearted</span><span class="vocab-def">done without much enthusiasm or confidence</span></div>
+      <div class="vocab-entry"><span class="vocab-word">foreshadowing</span><span class="vocab-def">hints earlier in the story of what will happen later</span></div>
+      <div class="vocab-entry"><span class="vocab-word">identity bracelet</span><span class="vocab-def">a bracelet engraved with the wearer's name — for identification</span></div>
+    </div>
+
+    <div class="grammar-box show">
+      <strong>Grammar note:</strong> Short fragmented sentences create tension — "Wide awake." / "Station lights passed slowly in front of my eyes, then faster; then all was dark." — rhythm slows and quickens to match the narrator's emotions. Semi-colon links related observations without a full stop.
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="downloadSummary(8)">⬇ Download summary</button>
+    </div>
+  </article>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span><strong>Exam Reader – June 2026 · 5 D/A</strong> · Óscar Romero College</span>
+  <span>Study summaries · All 8 texts annotated</span>
+</footer>
+
+<script>
+const summaryData = {
+  1: {
+    title: "TEXT 1 – What if the internet collapsed?",
+    content: `SUMMARY
+An article asking what would happen if the entire internet failed worldwide. Optimists say the internet is too decentralised and resilient to collapse globally. But a growing number of engineers say it is not impossible. If it did fail: financial systems crash, supply chains break, hospitals fall into chaos, governments declare emergencies. Over time, societies adapt — returning to 1990s-style communication — while gaining benefits like less cybercrime and lower energy use.
+
+RHETORICAL STRUCTURE
+• Thesis: The internet is fragile — a global collapse is not impossible.
+• Counterargument: Optimists say the internet is too decentralised to fail at global scale.
+• Evidence: Past local outages in Spain and the USA give a glimpse of what total failure would look like.
+• Silver lining (concession): Lower energy use, no cybercrime, less social media pressure.
+• Conclusion: World reorganises around local networks and physical systems — a new technological era.
+
+KEY VOCABULARY
+• fragile – easily broken; vulnerable to failure
+• resilient – able to recover quickly from difficulties
+• uncentralized – spread out; not controlled from one point
+• grind to a halt – stop completely, slowly and painfully
+• supply chain – the network moving goods from producer to consumer
+• misinformation – false or inaccurate information spread widely
+
+GRAMMAR NOTE
+Future simple ('will fail', 'will grind to a halt') is used throughout the consequences section — this creates a tone of certainty about predicted outcomes. Also: 'too [adj] to [verb]' = so much of a quality that the action is impossible (e.g. "too resilient to fail").
+
+KEY THEMES
+Technology & fragility | Global interdependence | Resilience | Optimism vs pessimism`
+  },
+  2: {
+    title: "TEXT 2 – Aeroponics: feeding tomorrow's world?",
+    content: `SUMMARY
+A scientific-argumentative article making the case for aeroponics — growing plants with roots suspended in air, misted with a nutrient-rich solution. It begins with the global food waste problem (UN FAO: ~50% of fruit and vegetables wasted) and population growth pressures. Aeroponics eliminates water waste entirely, avoids nutrient run-off, and can be practised anywhere. Chicago's O'Hare airport has hosted an aeroponic garden since 2011. The article concludes that local aeroponic production could dramatically cut the environmental cost of shipping food thousands of miles.
+
+RHETORICAL STRUCTURE
+• Thesis: Aeroponics reduces natural resource use and waste — essential for a sustainable future.
+• Evidence: UN FAO: 50% of fruit/veg wasted. Chicago vegetables travel 3,000+ km. NASA: Southern California 4.2 gigatons water deficit/year.
+• Concession: Eliminating all waste is impossible — but reducing from 50% toward 0% is realistic.
+• Conclusion: Local aeroponic farms in cities = huge cut in water, minerals, transport costs at global scale.
+
+KEY VOCABULARY
+• aeroponics – growing plants in air/mist, roots sprayed with nutrients — no soil or water trough
+• hydroponics – growing plants in nutrient-rich water (step before aeroponics)
+• wastage – the amount wasted; unnecessary loss of a resource
+• nutrient – a substance plants/animals need to grow
+• algal bloom – rapid algae growth caused by excess nutrients — harms water ecosystems
+• self-sufficient – able to produce everything one needs without importing
+• optimum – the best or most favourable conditions
+
+GRAMMAR NOTE
+Gerund as subject — "Cutting out all waste … is an impossible goal." The gerund (-ing form) acts as the subject. Also: conditional urgency: "If our world is to survive … we have no choice but to…"
+
+KEY THEMES
+Food sustainability | Innovation vs tradition | Resource waste | Population pressure`
+  },
+  3: {
+    title: "TEXT 3 – William Fox Talbot & the origins of photography",
+    content: `SUMMARY
+A biographical article tracing the invention of photography to William Henry Fox Talbot (born 1800), an English polymath elected to the Royal Society at 31. While travelling Europe in the 1830s using a camera obscura to sketch, Fox Talbot experimented with light-sensitive chemicals on paper — producing the 'calotype'. In 1839, French inventor Louis Daguerre announced the rival 'daguerrotype' (metal plates). Fox Talbot immediately responded. The calotype's negative/positive paper process proved simpler and became the international standard. Within 40 years others improved it; photography spread across Europe and North America.
+
+RHETORICAL STRUCTURE
+• Personal history: Born 1800, Cambridge, elected Royal Society at 31. Broad education: classics, chemistry, Hebrew, botany, maths.
+• Key fact: The oldest surviving photo — the 'Oriel window' at Lacock, 1835.
+• Rival: Daguerre's daguerrotype (1839) — more complex, metal plates, positive image.
+• Outcome: Calotype (negative/positive on paper) won out and became the world standard.
+
+KEY VOCABULARY
+• calotype – Fox Talbot's photographic process — negative image on chemically treated paper
+• daguerrotype – Daguerre's rival process — positive image on metal plate, more complex
+• impregnated – soaked with / infused with (chemicals)
+• camera obscura – a box with a lens that projects an image inside — used for drawing
+• the latter – the second of two things just mentioned (formal linking device)
+• contemporaries – people living or working at the same time as the person mentioned
+
+GRAMMAR NOTE
+"While Daguerre's process produced a positive image on metal, Fox Talbot's produced a negative image on paper" — 'while' introduces a contrast clause. Also: "the latter finally disappeared" — 'the latter' always refers to the second of two previously named items.
+
+KEY THEMES
+History of invention | Science & discovery | Competition & progress | Then vs now`
+  },
+  "4a": {
+    title: "TEXT 4a – Dorothea Lange: a visionary whose camera never lied",
+    content: `SUMMARY
+A vivid profile of American documentary photographer Dorothea Lange (1895–1965). In 1936, she photographed a destitute pea-pickers camp in California and captured the 'Migrant Mother' — a 32-year-old woman from Oklahoma with 6 children. Published in the San Francisco News, it prompted the federal government to rush aid. Later hired by the Farm Security Administration, Lange documented Depression-era agricultural workers. Her courage showed early: she took her mother's maiden name when her father deserted the family, studied photography before she could afford a camera, and contracted polio. Her approach: "A camera is a tool for learning how to see without a camera."
+
+RHETORICAL STRUCTURE
+• Argument/thesis: Art has real uses — Lange's photography changed government policy.
+• Personal history: Polio, absent father, self-taught; her adversity shaped her empathy.
+• Evidence of impact: Federal aid to the camp within days of publication. Hired by Farm Security Administration.
+• Key quotes: "I never steal a photograph." / "A camera is a tool for learning how to see without a camera."
+
+KEY VOCABULARY
+• visionary – someone with original ideas; here = one who saw truth others missed
+• destitute – extremely poor; without basic necessities
+• defiant – boldly resistant to authority or norms
+• principled – acting according to strong moral rules
+• palpable – so strong it seems almost touchable or visible
+• portraiture – the art of making portraits
+
+GRAMMAR NOTE
+Fronted adjectives for emphasis — "Defiant, principled, tireless in her pursuit … Lange is a heroine of the lens." Interrupted direct speech: "'A camera is a tool,' she once said, 'for learning…'" — the attribution splits the quote.
+
+KEY THEMES
+Art with social purpose | Justice & inequality | Individual vs situation | Courage & adversity`
+  },
+  "4b": {
+    title: "TEXT 4b – Climate change: can we stop it?",
+    content: `SUMMARY
+An accessible but urgent article about climate change. It dismisses denial positions before establishing scientific consensus: the world is getting hotter and humans are responsible. The 2021 COP26 summit in Glasgow set targets — many countries pledged carbon neutrality by 2050 and committed to stop using coal and oil. The 'coal dilemma' is explored: coal-dependent countries cannot switch off coal without alternative electricity. Obstacles include expensive green technology, political cowardice, and big companies prioritising profit. Conclusion: we cannot afford not to fight climate change, because a catastrophe costs more than prevention.
+
+RHETORICAL STRUCTURE
+• Thesis: The world is heating; we must act now — inaction is more expensive than action.
+• Counterarguments (dismissed): "Climate change is not real." / "We cannot stop it." / "It's not caused by humans."
+• Evidence: COP26 (2021) commitments. Carbon neutrality pledges. Coal dilemma. Countries like China, Poland, Greece still coal-dependent.
+• Obstacles: Cost of green tech, political inaction, coal dependency, poorer nations lacking technology.
+• Conclusion: "We cannot afford not to fight climate change" — double negative for rhetorical force.
+
+KEY VOCABULARY
+• drastic – strong and extreme; used when urgent action is needed
+• catastrophe – a sudden, large-scale disaster with severe consequences
+• carbon neutral – producing no net CO₂ — balancing emissions with removal
+• renewables – energy from naturally replenished sources: wind, solar, hydro
+• intermittent – not continuous; stopping and starting
+• consensus – general agreement among a group
+
+GRAMMAR NOTE
+Double negative for rhetorical emphasis: "we cannot afford not to fight" = we absolutely must fight. Parallel structure in criticism — "they make promises, but they do not keep them."
+
+KEY THEMES
+Climate crisis | Political responsibility | Science vs denial | Economic trade-offs`
+  },
+  6: {
+    title: "TEXT 6 – Leaving home: a teenage dilemma",
+    content: `SUMMARY
+A British socio-cultural feature on teenagers leaving home. It opens with the gap between the teenage dream of independence and harsh reality. A survey shows most 12-15 year olds want to leave at 16, but 18-19 year olds say 18 is more sensible. The article tracks rising homelessness among young Londoners — now driven by 'push factors' (broken homes, poverty, aggression) rather than 'pull factors' (excitement, jobs). Statistics: single-parent families rose from 5% (1961) to 25% (2025) in the UK. Three testimonies: Simon (stays home happily), Sarah (pulled to London by boredom, doing OK), Darren (pushed out by family chaos, now in a homeless hostel training to be a builder). A final section covers boarding schools and university as structured pathways to independence.
+
+RHETORICAL STRUCTURE
+• Thesis: Leaving home is a key British teenage milestone — but increasingly driven by hardship, not aspiration.
+• Statistics: Survey data (12-15 vs 18-19 year olds). Single-parent families: 5% → 25%. 69,000 boarders in 2024.
+• Testimonies: Simon (stay), Sarah (pull factor — boredom), Darren (push factor — family breakdown).
+• Conclusion (implied): University/boarding school = structured independence; homelessness = unstructured crisis.
+
+KEY VOCABULARY
+• pull factors – positive reasons attracting someone to a new place (jobs, excitement)
+• push factors – negative conditions driving someone away from home (poverty, violence)
+• cooped up – confined in a small or restrictive space; feeling trapped
+• definitive break – a permanent, final separation — not a temporary departure
+• boarding school – a school where pupils live during term time
+• qualifications – official certificates showing exam success
+• allowance – a regular amount of money given by parents to support a child
+
+GRAMMAR NOTE
+Reported speech without quotation marks — common in journalism: "thought that teenagers should be allowed to leave home at 16." Informal register in testimonies — "I s'pose", "I couldn't stand it" — contrasts with formal article body.
+
+KEY THEMES
+Independence & growing up | Social inequality | Push vs pull factors | British culture & class`
+  },
+  7: {
+    title: "TEXT 7 – The story of Silicon Valley",
+    content: `SUMMARY
+A concise history of Silicon Valley — the tech hub near San Francisco — explaining what it is, where it is, and why it formed there. The answer lies in 1960s counterculture: hippies and radical students at Berkeley and Stanford created a culture of anti-establishment entrepreneurship. The best graduates didn't join Ford or Exxon — they stayed in California and ran their own companies. Key milestones: Intel (1968), first computer mouse at Stanford (1968), Xerox PARC (1970), Apple garage start-up by Steve Jobs (1976). The Arpanet — a primitive internet — connected many Valley addresses. Today Silicon Valley remains the world's largest concentration of tech companies, though Microsoft is based near Seattle.
+
+RHETORICAL STRUCTURE
+• Hook: "If old America was made in New York or Detroit, modern America is made in Silicon Valley."
+• Historical context: 1960s counterculture — hippies + radical students = anti-establishment entrepreneurship.
+• Key facts: Intel 1968. Computer mouse 1968. Xerox PARC 1970. Apple garage 1976. Arpanet (pre-internet).
+• Conclusion: Silicon Valley still biggest tech concentration; Microsoft is the notable exception (Seattle).
+
+KEY VOCABULARY
+• semiconductor – a material (like silicon) that conducts electricity under certain conditions — core to all computer chips
+• hot-bed – a place where a particular activity develops rapidly
+• radical – someone who wants fundamental political or social change
+• Arpanet – early US military/academic network — the precursor to the internet
+• concentration – a large number of things gathered in one area
+• flower power – slogan of the 1960s peace/hippie movement
+
+GRAMMAR NOTE
+Parallel structure in the opening: "If old America was made in X, modern America is made in Y" — elegant contrast using the same grammatical structure. 'Instead' as a discourse marker signals a sharp change of direction.
+
+KEY THEMES
+Innovation & entrepreneurship | Counterculture as catalyst | American identity | Technology & geography`
+  },
+  8: {
+    title: "TEXT 8 – The girl in the denim jacket",
+    content: `SUMMARY
+A first-person short story told in retrospect. At 2am, the narrator — a college student — cannot sleep and writes down what happened earlier that evening on the London Underground. At Willesden Junction he notices a mysterious, beautiful, worried-looking girl in a denim jacket carrying English-language books. They share a glance and smile on the platform. On the train they sit near each other but don't talk. As the train halts at Harrow, they finally begin to speak — she answers in broken English. Suddenly three plain-clothes police officers board, identify the girl and arrest her. She grabs the narrator's arm in fear, struggles, and drops her bracelet. The narrator is silenced by the inspector. The girl is dragged away, crying. When the train moves, the narrator picks up the bracelet — an identity bracelet with no name. Deliberately ambiguous ending.
+
+NARRATIVE STRUCTURE
+• Opening (in medias res): Narrator awake at 2am, writing down what happened. Creates immediate intrigue.
+• Rising tension: Platform encounter → train → shared seats → first words → police arrive.
+• Character clues: Denim jacket, English-learning books, broken English, worried eyes, no name on bracelet.
+• Ambiguous ending: Identity bracelet has no name — reader left to interpret who she is and why arrested.
+
+KEY VOCABULARY
+• in medias res – starting a story in the middle of the action — a classic literary technique
+• blurted out – said something suddenly and without thinking
+• running you in – British slang: arresting you
+• hustled – pushed/pulled quickly and roughly
+• half-hearted – done without much enthusiasm or confidence
+• foreshadowing – hints earlier in the story of what will happen later
+• identity bracelet – a bracelet engraved with the wearer's name — for identification
+
+GRAMMAR NOTE
+Short fragmented sentences create tension — "Wide awake." / "Then all was dark." — rhythm slows and quickens to match the narrator's emotions. Semi-colon links related observations without a full stop.
+
+KEY THEMES
+Mystery & suspense | Chance encounters | Immigration & identity | Empathy vs helplessness`
+  }
+};
+
+function downloadSummary(id) {
+  const data = summaryData[id];
+  if (!data) return;
+  const blob = new Blob([data.title + '\n' + '='.repeat(data.title.length) + '\n\n' + data.content + '\n\n---\nExam Reader – June 2026 · 5 D/A · Óscar Romero College'], {type: 'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `summary-text-${id}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadAll() {
+  const keys = [1, 2, 3, '4a', '4b', 6, 7, 8];
+  keys.forEach((key, i) => {
+    setTimeout(() => downloadSummary(key), i * 200);
+  });
+}
+
+function toggleVocab(btn) {
+  const panel = btn.nextElementSibling;
+  const isOpen = panel.classList.toggle('open');
+  btn.textContent = (isOpen ? '▼ Hide key vocabulary' : '▶ Show key vocabulary') + btn.textContent.replace(/[▼▶] (Hide|Show) key vocabulary/, '').trim().replace(/^\s*\(/, ' (');
+  if (!btn.textContent.includes('(')) {
+    const match = btn.getAttribute('onclick');
+  }
+  btn.textContent = isOpen
+    ? btn.textContent.replace('▶ Show', '▼ Hide')
+    : btn.textContent.replace('▼ Hide', '▶ Show');
+}
+</script>
+</body>
+</html>
